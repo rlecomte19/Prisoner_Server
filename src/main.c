@@ -21,6 +21,13 @@ int main()
 	}else{
 		printf("\n/!\\ La salle d'attente n'a pas pu être initialisée /!\\");
 	}
+	for(int l=0;l<MAX_CLIENTS/2;l++){
+        printf("\n[BINOME %d] - IDS : ", l);
+        for(int k=0;k<MAX_CLIENTS/2;k++){
+            printf("%d ", binomes[l].clients_id[k]);
+        }
+        printf("\n");
+    }
 
 	free(room);
 	free(binomes);

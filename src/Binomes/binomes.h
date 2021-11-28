@@ -25,6 +25,12 @@ Binome *create_binomes(WaitingRoom *room);
  */
 void add_to_binome(Binome *binome, int client_id);
 
+/**
+ * @brief Create a copy of clients identifiers that are contained in the waiting room
+ * 
+ * @param room 
+ * @return int* 
+ */
 int *randomly_mix_clients(WaitingRoom *room);
 
 

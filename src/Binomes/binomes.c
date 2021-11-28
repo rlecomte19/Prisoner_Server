@@ -2,28 +2,27 @@
 #include <time.h>
 
 Binome *create_binomes(WaitingRoom *room){
+    // Retrieves a copy of mixed clients identifiers in an array
     int *ids = randomly_mix_clients(room);
-    Binome *binomes[MAX_CLIENTS/2];
+
+    // Array of binomes which will be used to create rounds
+    Binome *binomes = malloc(sizeof(Binome) * (MAX_CLIENTS/2));
+
+    int idIndex = 0; // Used to fill binomes client identifiers at the right positions
+    
     // Used to save binomes to the correct index
     for(int i=0; i<room->size/2;i++){
         // Used to retrieve clients id 2 by 2
-        for(int j=0;j<MAX_CLIENTS/2;j+=2){
-            Binome *b = malloc(sizeof(Binome));
-            initialize_binome(b);
-            add_to_binome(b, ids[j]);
-            add_to_binome(b, ids[j+1]);
+        for(int j=0;j<room->size/2;j+=2){
+            Binome b;
+            initialize_binome(&b);
+            add_to_binome(&b, ids[idIndex]);
+            add_to_binome(&b, ids[idIndex+1]);
             binomes[i] = b;
-        }
-
-        for(int i=0;i<MAX_CLIENTS/2;i++){
-            printf("\n[BINOME %d]", i);
-            printf("\nIDs : ");
-            for(int j=0;j<=2;j++){
-                printf(" %d", binomes[i]->clients_id[j]);
-            }
-            printf("\n");
+            idIndex+=2;
         }
     }
+
     return binomes;
 }
 
