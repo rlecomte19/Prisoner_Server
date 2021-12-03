@@ -5,10 +5,18 @@
 
 typedef struct{
     int clients_id[2];
-    int size;
+    short answer[2];
+    int index;
 }Binome;
 
+typedef struct{
+    Binome *list; 
+    int size;
+} BinomeList;
+
 void initialize_binome(Binome *binome);
+
+void initialize_binome_list(BinomeList *bL);
 /**
  * @brief Return a list of binomes randomly created from a waiting room
  * 

@@ -1,6 +1,14 @@
 #include "./binomes.h"
 #include <time.h>
 
+void initialize_binome_list(BinomeList *bL){
+    bL->list = malloc(sizeof(BinomeList));
+    bL->size = 0;
+}
+void initialize_binome(Binome *binome){
+    binome->index = 0;
+}
+
 Binome *create_binomes(WaitingRoom *room){
     // Retrieves a copy of mixed clients identifiers in an array
     int *ids = randomly_mix_clients(room);
@@ -45,12 +53,11 @@ int* randomly_mix_clients(WaitingRoom *room){
 }
 
 void add_to_binome(Binome *binome, int client_id){
-    binome->clients_id[binome->size] = client_id;
-    binome->size++;
+    binome->clients_id[binome->index] = client_id;
+    binome->index++;
 }
-void initialize_binome(Binome *binome){
-    binome->size = 0;
-}
+
+
 
 
 

@@ -2,6 +2,21 @@
 #include <stdlib.h>
 
 #include "./Binomes/binomes.h"
+#include "./Communication/net_prisoner_server.h"
+
+Binome *binomes;
+// Binome *binomes = malloc(sizeof(Binome) * MAX_CLIENTS);
+
+
+// void client_disconnect(int id){
+
+// }
+// void round(Binome *b){
+// 	net_server_send_choice(b->clients_id[0]);
+// 	net_server_send_choice(b->clients_id[1]);
+// }
+
+
 
 int main()
 {	

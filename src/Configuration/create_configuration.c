@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "./create_configuration.h"
+#include "../Communication/net_prisoner_server.h"
 
 void create_configuration(){
     char serv_ip[100];
@@ -49,4 +50,21 @@ void create_configuration(){
         // If set up file couldn't load, app is stopped.
         exit(5);
     }
+}
+
+void init(){
+	char* ip = NULL;
+	int port = -1;
+	// @todo : parcourir le fichier de paramétrage pour rechercher : IP / PORT&
+	if(ip!=NULL && port!=-1){
+		net_server_init(ip, port);
+	}
+}
+
+void disconnect_client(int id){
+    // for(int i=0;i<size;i++){
+    //     if(connected_clients[i] == id){
+    //         connected_clients[i] = -1;
+    //     }
+    // }
 }
