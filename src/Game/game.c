@@ -1,13 +1,21 @@
 #include "game.h"
-#include "../Communication/net_prisoner_server.h"
 
 BinomeList *binomes;
+GameList *gameList; 
 
-void game(){
-    binomes = malloc(sizeof(Binome));
-    
+void game_init(GameList *list, Game *game, Binome *binome){
+    game = malloc(sizeof(Game));
+    binome->gameIndex = list->index;
+
+    // Registering the created game to server's list
+    add_to_game_list(list, game);
+
+    // Sending to the client the "order" of displaying game's view
+    net_server_send_screen_choice(binome->clients_id[0]); 
+    net_server_send_screen_choice(binome->clients_id[1]); 
+
 }
-void betray(int id, ulong answerTime) {
+void betray(int id, unsigned long answerTime) {
     
     Binome *usedBinome = get_client_binome(id);
     int playerIdIndex = -1;
@@ -17,16 +25,23 @@ void betray(int id, ulong answerTime) {
         }
     }
 	if(areAnswersWritten(usedBinome)){
-        usedBinome->answer[playerIdIndex] = 0;
+        switch (playerIdIndex) {
+            case 0:
+                usedBinome->clients_answers->p1_answer = "Trahison";
+            break;
+            case 1:
+                usedBinome->clients_answers->p2_answer = "Trahison";
+            break;
+        }
         end_round(usedBinome);
 	}
-	else{
+	else{ 
 		net_server_send_screen_waiting(id);
 	}
 
 }
 
-void collaborate(int id, ulong answerTime) {
+void collaborate(int id, unsigned long answerTime) {
     Binome *usedBinome = get_client_binome(id);
     int playerIdIndex = -1;
     for(int i=0; i<2;i++){
@@ -34,8 +49,17 @@ void collaborate(int id, ulong answerTime) {
             playerIdIndex = i;
         }
     }
+    // If each player has answered, their answers are registered and the round can end. 
+    // If only the player who calls this function is answering, he is "ordered" to wait the other player's answer
 	if(areAnswersWritten(usedBinome)){
-        usedBinome->answer[playerIdIndex] = 1;
+        switch (playerIdIndex) {
+            case 0:
+                usedBinome->clients_answers->p1_answer = "Collaboration";
+            break;
+            case 1:
+                usedBinome->clients_answers->p2_answer = "Collaboration";
+            break;
+        }
         end_round(usedBinome);
 	}
 	else{ 
@@ -43,8 +67,8 @@ void collaborate(int id, ulong answerTime) {
 	}
 }
 
-Binome* get_client_binome(int id){
-    Binome *usedBinome = malloc(sizeof(Binome));
+Binome* _get_client_binome(int id){
+    Binome *usedBinome;
     for(int i=0;i<binomes->size;i++){
         for(int j=0;j<2;j++){
             if(binomes->list[i].clients_id[j] == id){
@@ -56,9 +80,9 @@ Binome* get_client_binome(int id){
     return usedBinome;
 }
 
-int are_answers_written(Binome *b){
+int _are_answers_written(Binome *b){
     int answersWritten = 0;
-    if(b->answer[0] != -1 && b->answer[1] != -1){
+    if(b->clients_answers->p1_answer != -1 && b->clients_answers->p2_answer != -1){
         answersWritten = 1;
     }
     return answersWritten;
@@ -71,7 +95,9 @@ void end_round(Binome *b){
     // renvoyer fin de partie si c'est le cas
 }
 
+Game* _get_game_binome(Binome *b);
+
 void reinitializeAnswer(Binome *b){
-    b->answer[0] = -1;
-    b->answer[0] = -1;
+    b->clients_answers->p1_answer = -1;
+    b->clients_answers->p2_answer = -1;
 }

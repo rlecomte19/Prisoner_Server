@@ -5,23 +5,14 @@
 #include "./Communication/net_prisoner_server.h"
 
 Binome *binomes;
-// Binome *binomes = malloc(sizeof(Binome) * MAX_CLIENTS);
-
-
-// void client_disconnect(int id){
-
-// }
-// void round(Binome *b){
-// 	net_server_send_choice(b->clients_id[0]);
-// 	net_server_send_choice(b->clients_id[1]);
-// }
+WaitingRoom *room;
 
 
 
 int main()
 {	
-	WaitingRoom *room = malloc(sizeof(WaitingRoom));
-	Binome *binomes = malloc(sizeof(Binome)*(MAX_CLIENTS/2));
+	room = malloc(sizeof(WaitingRoom));
+	binomes = malloc(sizeof(Binome)*(MAX_CLIENTS/2));
 
 	if(room != NULL && binomes != NULL){
 		initialize_waiting_room(room);
