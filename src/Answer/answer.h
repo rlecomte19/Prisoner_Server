@@ -5,7 +5,10 @@ typedef struct {
 } Answer;
 
 typedef struct {
-    // Evolution : faire un tableau static ayant pour taille le nombre de rounds
+    /**
+     * Evolution : faire un tableau static ayant pour taille le nombre de rounds
+     * @todo ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    */
     Answer answers[10];
     size;
 } AnswerList;
