@@ -1,6 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifndef waiting_room_h
+#define waiting_room_h
+
 #define MAX_CLIENTS 4
 
 typedef struct{
@@ -48,3 +51,5 @@ int is_waiting_room_full(WaitingRoom *room);
  * @param room 
  */
 void print_waiting_room(WaitingRoom *room);
+
+#endif

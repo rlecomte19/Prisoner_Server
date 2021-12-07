@@ -1,4 +1,6 @@
 
+#ifndef answer_h
+#define answer_h
 typedef struct {
     char *p1_answer;
     char *p2_answer;
@@ -10,9 +12,11 @@ typedef struct {
      * @todo ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     */
     Answer answers[10];
-    size;
+//    size;
 } AnswerList;
 
 void initialize_answer(Answer *answer);
 void initialize_answer_list(AnswerList *list);
 void add_to_answer_list(AnswerList *list, Answer *answer);
+
+#endif
