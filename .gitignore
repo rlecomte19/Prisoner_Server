@@ -23,3 +23,6 @@ doxygen
 
 # inclus la config de Doxygen
 !configDoxygen
+
+# ignore config file
+*.ini
