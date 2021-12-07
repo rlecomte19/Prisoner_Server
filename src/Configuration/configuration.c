@@ -15,7 +15,7 @@ void init_configuration()
         fi = fopen("config.ini", "w");
         fputs("# server config file\n", fi);
         fputs("# any line starting with a # or are blank will be ignored\n", fi);
-        fputs("# the space before and after ':' are mandatory for a correct file reading\n", fi);
+        fputs("# the space before and after '=' are mandatory for a correct file reading\n", fi);
         fputs("# if a settings isn't found, default value will be used\n", fi);
         fputs("\n", fi);
         fputs("# define the ip the server should listen to\n", fi);
