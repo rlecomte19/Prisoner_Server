@@ -1,12 +1,17 @@
 #include "configuration.h"
 
-char *config_serv_ip;
+char config_serv_ip[20];
 int config_serv_port;
 int config_nb_rounds;
 
 void init_configuration()
 {
     FILE *fi = fopen("config.ini", "r");
+
+    //config_serv_ip = "0.0.0.0";
+    memcpy(&config_serv_ip, "0.0.0.0", 9);
+    config_serv_port = 7799;
+    config_nb_rounds = 3;
 
     // fi will be null if the file doesn't exist
     if (fi == NULL)
@@ -21,41 +26,95 @@ void init_configuration()
         fputs("# define the ip the server should listen to\n", fi);
         fputs("# default: 0.0.0.0 (listen everywhere)\n", fi);
         fputs("server_ip = 0.0.0.0\n", fi);
-        config_serv_ip = "0.0.0.0";
         fputs("\n", fi);
         fputs("# define the server port\n", fi);
         fputs("# default: 7799\n", fi);
         fputs("server_port = 7799\n", fi);
-        config_serv_port = 7799;
         fputs("\n", fi);
         fputs("# Number of round game\n", fi);
         fputs("# default: 3\n", fi);
         fputs("round_number = 3\n", fi);
-        config_nb_rounds = 3;
         fclose(fi);
     }
     else
     {
-        
+        char *line = NULL;
+        size_t len = 0;
+        ssize_t read;
+        while ((read = getline(&line, &len, fi)) != -1)
+        {
+            if (len > 0)
+            {
+                //saute les lignes qui sont juste un retour à la ligne
+                //ou les lignes qui commencent par un #
+                if (line[0] == '\n' || line[0] == '#')
+                {
+                    continue;
+                }
+
+                if (_start_by(line, "server_ip"))
+                {
+                    sscanf(line, "%*s = %s", config_serv_ip);
+                }
+                else if (_start_by(line, "server_port"))
+                {
+                    sscanf(line, "%*s = %i", &config_serv_port);
+                }
+                else if (_start_by(line, "round_number"))
+                {
+                    sscanf(line, "%*s = %i", &config_nb_rounds);
+                }
+            }
+        }
     }
+    printf("server_ip = %s\n", config_serv_ip);
+    printf("server_port = %i\n", config_serv_port);
+    printf("round_number = %i\n", config_nb_rounds);
 }
 
-// void init()
-// {
-//     char *ip = NULL;
-//     int port = -1;
-//     // @todo : parcourir le fichier de paramétrage pour rechercher : IP / PORT&
-//     if (ip != NULL && port != -1)
-//     {
-//         net_server_init(ip, port);
-//     }
-// }
+/**
+ * @brief Check if str1 start with str2
+ * This function is case sensitive
+ * Examples:
+ * - str1 = "abcdefg"
+ * - str2 = "abc"
+ * -> return true
+ * 
+ * - str1 = "apple juice"
+ * - str2 = "orange"
+ * -> return false
+ * 
+ * @param str1 tested text
+ * @param str2 text to test
+ * @return true if str1 start is equals to str2 text
+ * @return false if str1 != str2 or one of the two contains nothing
+ */
+bool _start_by(char *str1, char *str2)
+{
+    // determine who is the smallest between str1 and str2
+    int min_size = strlen(str1);
+    int snd_size = strlen(str2);
+    if (snd_size < min_size)
+    {
+        min_size = snd_size;
+    }
 
-// void disconnect_client(int id)
-// {
-//     // for(int i=0;i<size;i++){
-//     //     if(connected_clients[i] == id){
-//     //         connected_clients[i] = -1;
-//     //     }
-//     // }
-// }
+    // we substract 1 because we don't want to check the end of string character (\0)
+    min_size--;
+
+    // check if the size is valid before we continue
+    if (min_size < 0)
+    {
+        return false;
+    }
+
+    // check if str1 start with str2
+    for (int i = 0; i < min_size; i++)
+    {
+        if (str1[i] != str2[i])
+        {
+            return false;
+        }
+    }
+    return true;
+}
