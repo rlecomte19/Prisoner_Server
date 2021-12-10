@@ -3,6 +3,7 @@
 char config_serv_ip[20];
 int config_serv_port;
 int config_nb_rounds;
+struct_config_games config_games;
 
 void init_configuration()
 {
@@ -12,6 +13,10 @@ void init_configuration()
     memcpy(&config_serv_ip, "0.0.0.0", 9);
     config_serv_port = 7799;
     config_nb_rounds = 3;
+    memset(config_games.pairs, -1, sizeof(config_games.pairs));
+    config_games.pairs[0] = 1;
+    config_games.pairs[1] = 2;
+    config_games.size = 2;
 
     // fi will be null if the file doesn't exist
     if (fi == NULL)
@@ -34,6 +39,10 @@ void init_configuration()
         fputs("# Number of round game\n", fi);
         fputs("# default: 3\n", fi);
         fputs("round_number = 3\n", fi);
+        fputs("\n", fi);
+        fputs("# Define prisoner's pair", fi);
+        fputs("# default: 1,2|3,4", fi);
+        fputs("games = 1,2|3,4", fi);
         fclose(fi);
     }
     else
@@ -64,12 +73,38 @@ void init_configuration()
                 {
                     sscanf(line, "%*s = %i", &config_nb_rounds);
                 }
+                else if (_start_by(line, "games"))
+                {
+                    //clearing array before hand
+                    memset(config_games.pairs, -1, sizeof(config_games.pairs));
+                    config_games.size = 0;
+
+                    char text[255];
+                    sscanf(line, "%*s = %s", text);
+
+                    //heavily inspired from here: https://www.cplusplus.com/reference/cstring/strtok/
+                    int i1, i2;
+                    int index = 0;
+                    char *ret;
+                    ret = strtok(text, "|");
+                    while (ret != NULL)
+                    {
+                        sscanf(ret, "%i,%i", &i1, &i2);
+                        config_games.pairs[index] = i1;
+                        index++;
+                        config_games.pairs[index] = i2;
+                        index++;
+                        config_games.size += 2;
+
+                        ret = strtok(NULL, "|");
+                    }
+                }
             }
         }
     }
-    printf("server_ip = %s\n", config_serv_ip);
-    printf("server_port = %i\n", config_serv_port);
-    printf("round_number = %i\n", config_nb_rounds);
+    // printf("server_ip = %s\n", config_serv_ip);
+    // printf("server_port = %i\n", config_serv_port);
+    // printf("round_number = %i\n", config_nb_rounds);
 }
 
 /**

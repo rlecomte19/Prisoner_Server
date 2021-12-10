@@ -26,3 +26,6 @@ doxygen
 
 # ignore config file
 *.ini
+
+# personnal note
+notes.md
