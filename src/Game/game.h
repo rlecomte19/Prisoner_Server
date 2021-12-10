@@ -50,16 +50,29 @@ typedef struct {
     int size;
 } GameList;
 
+
+// Done
 void game_init(Game *game, Binome *binome);
+// Done
 void betray();
+// Done
 void collaborate();
-void endGame();
+// TODO
+void end_game();
+// TODO
 void end_round();
-int _are_answers_written(Binome *b); 
+
+// Done
 void _add_new_game(Game *game);
+// Done
 Binome* _get_client_binome(int id);
+// Done
+int _are_answers_written(Binome *b);
+// Done
 Game* _get_game_binome(Binome *b);
 
+// Done
+void reinitializeAnswer(Binome *b);
 
 // ---------------------------------------
 //                 BINOMES

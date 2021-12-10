@@ -9,7 +9,13 @@ GameList *list_of_games;
 // ----------------------------------------------
 void game_init(Game *game, Binome *binome)
 {
+    // Initializing Game structure elements
     game = malloc(sizeof(Game));
+    game->b = binome;
+    game->currentRound = 0;
+    game->list_of_answers = malloc(sizeof(AnswerList));
+
+    // Size from GameList is added as binome current game
     binome->gameIndex = list_of_games->size;
 
     // Registering the created game to server's list
@@ -18,6 +24,7 @@ void game_init(Game *game, Binome *binome)
     net_server_send_screen_choice(binome->clients_id[0]);
     net_server_send_screen_choice(binome->clients_id[1]);
 }
+
 void _add_new_game(Game *game){
     list_of_games->gameList[list_of_games->size] = game;
     list_of_games->size++;
@@ -146,22 +153,23 @@ Game *_get_game_binome(Binome *b)
 
 void end_game(Binome *b){
     Game *g = _get_game_binome(b);
-    for(int i=0; i<g->list_of_ans->size;i++){
-
+    for(int i=0; i<g->list_of_answers->size;i++){
+        // store_results(AnswerList *list)
     }
 
 }
 // ------------------------------------
 //                 BINOMES
 // ------------------------------------
-void initialize_binome_list(BinomeList *bL){
-    bL->list = malloc(sizeof(BinomeList));
-    bL->size = 0;
-}
 void initialize_binome(Binome *binome){
     binome->gameIndex = -1;
     binome->clientIndex = -1;
 }
+void initialize_binome_list(BinomeList *bL){
+    bL->list = malloc(sizeof(BinomeList));
+    bL->size = 0;
+}
+
 
 /** @todo!!! Mettre en place la création des binomes à partir de la liste du fichier de paramétrage */
 
