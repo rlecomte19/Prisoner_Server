@@ -2,7 +2,6 @@
 #include <stdlib.h>
 
 #include "../Answer/answer.h"
-#include "../WaitingRoom/waiting_room.h"
 
 #ifndef binomes_h
 #define binomes_h

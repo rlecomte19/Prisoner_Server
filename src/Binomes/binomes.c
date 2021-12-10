@@ -1,4 +1,5 @@
 #include "./binomes.h"
+#include "../Game/game.h"
 #include <time.h>
 
 void initialize_binome_list(BinomeList *bL){
