@@ -1,22 +1,34 @@
 #include "game.h"
 
 BinomeList *binomes;
-GameList *gameList;
+GameList *list_of_games;
 
-void game_init(GameList *list, Game *game, Binome *binome)
+
+// ----------------------------------------------
+//                 GAME INITIALISATIONS
+// ----------------------------------------------
+void game_init(Game *game, Binome *binome)
 {
     game = malloc(sizeof(Game));
-    binome->gameIndex = list->index;
+    binome->gameIndex = list_of_games->size;
 
     // Registering the created game to server's list
-    add_to_game_list(list, game);
-
+    _add_new_game(game);
     // Sending to the client the "order" of displaying game's view
     net_server_send_screen_choice(binome->clients_id[0]);
     net_server_send_screen_choice(binome->clients_id[1]);
 }
-void betray(int id, unsigned long answerTime)
-{
+void _add_new_game(Game *game){
+    list_of_games->gameList[list_of_games->size] = game;
+    list_of_games->size++;
+}
+
+
+
+// ----------------------------------------------
+//                 GAME MANAGEMENT
+// ----------------------------------------------
+void betray(int id, ulong answerTime){
 
     Binome *usedBinome = _get_client_binome(id);
     int playerIdIndex = -1;
@@ -78,6 +90,25 @@ void collaborate(int id, unsigned long answerTime)
     }
 }
 
+void reinitializeAnswer(Binome *b)
+{
+    b->clients_answers->p1_answer = -1;
+    b->clients_answers->p2_answer = -1;
+}
+
+void end_round(Binome *b){
+    Game *binomeGame = _get_game_binome(b);
+    reinitializeAnswer(b);
+    if(binomeGame->currentRound == binomeGame->nbMaxRounds){
+        // end_game();
+    }else{
+        // net_server_send_screen_score(); (aux deux)
+    }
+}
+
+// ----------------------------------------------
+//                 GAME DATA RECOVERY
+// ----------------------------------------------
 Binome *_get_client_binome(int id)
 {
     Binome *usedBinome;
@@ -105,26 +136,51 @@ int _are_answers_written(Binome *b)
     return answersWritten;
 }
 
-void end_round(Binome *b)
-{
-    reinitializeAnswer(b);
-    // AFFICHER RESULTATS ROUNDS : net_server_send_end_round ?
-    // tester si le nombre max de rounds n'a pas été atteint
-    // renvoyer fin de partie si c'est le cas
-}
-
 Game *_get_game_binome(Binome *b)
 {
-    //todo
+    // Retrieving the affected game from gameIndex contained into "Binome" param  
+    Game *usedGame;
+    usedGame = list_of_games->gameList[b->gameIndex];
+    return usedGame;
 }
 
-void reinitializeAnswer(Binome *b)
-{
-    b->clients_answers->p1_answer = -1;
-    b->clients_answers->p2_answer = -1;
+void end_game(Binome *b){
+    Game *g = _get_game_binome(b);
+    for(int i=0; i<g->list_of_ans->size;i++){
+
+    }
+
+}
+// ------------------------------------
+//                 BINOMES
+// ------------------------------------
+void initialize_binome_list(BinomeList *bL){
+    bL->list = malloc(sizeof(BinomeList));
+    bL->size = 0;
+}
+void initialize_binome(Binome *binome){
+    binome->gameIndex = -1;
+    binome->clientIndex = -1;
 }
 
-void add_to_game_list(GameList *list, Game *game)
-{
-    //todo
+/** @todo!!! Mettre en place la création des binomes à partir de la liste du fichier de paramétrage */
+
+
+// ----------------------------------------------
+//               ANSWERS OF BINOMES
+// ----------------------------------------------
+void initialize_answer(Answer *answer) {
+    answer = malloc(sizeof(Answer));
+}
+void initialize_answer_list(AnswerList *list) {
+    list = malloc(sizeof(AnswerList));
+}
+extern BinomeList *binomes;
+extern GameList *gameList;
+void add_to_answer(Binome *b, int client_id, char *answer){
+
+}
+void add_to_answer_list(AnswerList *list, Answer *answer) {
+    list->answers[list->size] = answer;
+    list->size++;
 }
