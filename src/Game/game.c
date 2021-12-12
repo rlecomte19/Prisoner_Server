@@ -1,4 +1,4 @@
-#include "game.h"
+#include "./game.h"
 
 BinomeList *binomes;
 GameList *list_of_games;
@@ -32,12 +32,24 @@ void _add_new_game(Game *game){
 
 
 
-// ----------------------------------------------
-//                 GAME MANAGEMENT
-// ----------------------------------------------
-void betray(int id, ulong answerTime){
 
+/** 
+ * --------------------------------------------------------------------------------------
+ *                                     GAME MANAGEMENT
+ * --------------------------------------------------------------------------------------
+ * This section concerns everything which will interact with the game's course of events.  
+ * We might quote : round management, starting and ending of the game, choices beget....
+ * 
+*/
+
+
+// @TODO FACTORIZE betray and collaborate methods (if possible with network coupling)
+
+void betray(int id, ulong answerTime){
+    // Retrieves a pointer of the Binome containing client's id (param given)
     Binome *usedBinome = _get_client_binome(id);
+    
+    // Retrieving the player "calling" this function on the Binome 
     int playerIdIndex = -1;
     for (int i = 0; i < 2; i++)
     {
@@ -46,6 +58,7 @@ void betray(int id, ulong answerTime){
             playerIdIndex = i;
         }
     }
+    // Here we test if each player of the Binome has registered his answer ; in which case we 
     if (_are_answers_written(usedBinome))
     {
         switch (playerIdIndex)
@@ -125,7 +138,7 @@ Binome *_get_client_binome(int id)
         {
             if (binomes->list[i].clients_id[j] == id)
             {
-                // asigns address of right binome to a temporary variable
+                // asigns address of the good binome to a temporary variable
                 usedBinome = &(binomes->list[i]);
             }
         }
