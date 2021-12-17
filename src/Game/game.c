@@ -4,16 +4,21 @@ BinomeList *binomes;
 GameList *list_of_games;
 
 
-// ----------------------------------------------
-//                 GAME INITIALISATIONS
-// ----------------------------------------------
+/** 
+ * --------------------------------------------------------------------------------------
+ *                                   GAME INITIALISATIONS
+ * --------------------------------------------------------------------------------------
+ *
+ * 
+ * 
+*/
 void game_init(Game *game, Binome *binome)
 {
     // Initializing Game structure elements
     game = malloc(sizeof(Game));
     game->b = binome;
     game->currentRound = 0;
-    game->list_of_answers = malloc(sizeof(AnswerList));
+    initialize_answer_list(game->list_of_answers);
 
     // Size from GameList is added as binome current game
     binome->gameIndex = list_of_games->size;
@@ -112,8 +117,8 @@ void collaborate(int id, unsigned long answerTime)
 
 void reinitializeAnswer(Binome *b)
 {
-    b->clients_answers->p1_answer = -1;
-    b->clients_answers->p2_answer = -1;
+    b->clients_answers->p1_answer = "KO";
+    b->clients_answers->p2_answer = "KO";
 }
 
 void end_round(Binome *b){
@@ -149,7 +154,7 @@ Binome *_get_client_binome(int id)
 int _are_answers_written(Binome *b)
 {
     int answersWritten = 0;
-    if (b->clients_answers->p1_answer != -1 && b->clients_answers->p2_answer != -1)
+    if (b->clients_answers->p1_answer != "KO" && b->clients_answers->p2_answer != "KO")
     {
         answersWritten = 1;
     }
@@ -175,14 +180,40 @@ void end_game(Binome *b){
 //                 BINOMES
 // ------------------------------------
 void initialize_binome(Binome *binome){
-    binome->gameIndex = -1;
-    binome->clientIndex = -1;
-}
-void initialize_binome_list(BinomeList *bL){
-    bL->list = malloc(sizeof(BinomeList));
-    bL->size = 0;
+    binome->clients_answers->p1_answer = "KO";
+    binome->clients_answers->p2_answer = "KO";
+    binome->gameIndex = 0;
+    binome->clients_id[0] = -1;
+    binome->clients_id[1] = -1;
 }
 
+
+void initialize_binome_list(BinomeList *bL){
+    bL = malloc(sizeof(BinomeList));
+    bL->list = malloc(sizeof(Binome)*(MAX_CLIENTS/2));
+    bL->size = 0;
+
+    for(int i=0; i<MAX_CLIENTS; i+=2){
+        initialize_binome(&(bL->list[i]));
+        bL->size++;
+    }
+}
+
+void _init_binomes_from_config(BinomeList *binomes_config){
+    initialize_binome_list(binomes_config);
+    for(int i=0;i<config_games.size/2;i+=2){
+        binomes_config->list[i].clients_id[0] = config_games.pairs[i]; 
+        binomes_config->list[i].clients_id[1] = config_games.pairs[i+1]; 
+    }
+}
+
+int _is_binome_connected(Binome *binome){
+    int isConnected = 0;
+    if(binome->clients_id[0] != (-1) && binome->clients_id[1] != (-1)){
+        isConnected = 1;
+    }
+    return isConnected;
+}
 
 /** @todo!!! Mettre en place la création des binomes à partir de la liste du fichier de paramétrage */
 
@@ -192,14 +223,15 @@ void initialize_binome_list(BinomeList *bL){
 // ----------------------------------------------
 void initialize_answer(Answer *answer) {
     answer = malloc(sizeof(Answer));
+
 }
 void initialize_answer_list(AnswerList *list) {
     list = malloc(sizeof(AnswerList));
+    list->size = 0;
 }
-extern BinomeList *binomes;
-extern GameList *gameList;
-void add_to_answer(Binome *b, int client_id, char *answer){
 
+void add_to_answer(Binome *b, int client_id, char *answer){
+    // TODO 
 }
 void add_to_answer_list(AnswerList *list, Answer *answer) {
     list->answers[list->size] = answer;

@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include "../Configuration/configuration.h"
 
 #ifndef game_h
 #define game_h
@@ -28,7 +29,6 @@ typedef struct
     int clients_id[2];
     Answer *clients_answers;
     int gameIndex;
-    int clientIndex;
 } Binome;
 
 typedef struct
@@ -50,7 +50,9 @@ typedef struct {
     int size;
 } GameList;
 
-
+// -----------------------------------------------------
+//                GAME CONFIG & ENVIRONMENT
+// -----------------------------------------------------
 // Done
 void game_init(Game *game, Binome *binome);
 // Done
@@ -68,7 +70,13 @@ void _add_new_game(Game *game);
 Binome* _get_client_binome(int id);
 // Done
 int _are_answers_written(Binome *b);
-// Done
+
+/**
+ * @brief Retrieves game from binome game's index in list;
+ * 
+ * @param b 
+ * @return Game* 
+ */
 Game* _get_game_binome(Binome *b);
 
 // Done
@@ -86,6 +94,10 @@ void reinitializeAnswer(Binome *b);
 void initialize_binome(Binome *binome);
 
 void initialize_binome_list(BinomeList *bL);
+
+void _init_binomes_from_config(BinomeList *binomes_config);
+
+int _is_binome_connected(Binome *binome);
 
 
 // ----------------------------------------------
@@ -111,4 +123,5 @@ void initialize_answer_list(AnswerList *list);
  * @param answer 
  */
 void add_to_answer_list(AnswerList *list, Answer *answer);
+
 #endif
