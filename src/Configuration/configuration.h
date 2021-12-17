@@ -41,6 +41,8 @@ typedef struct
     int size;
 } struct_config_games;
 
+extern struct_config_games config_games;
+
 void init_configuration();
 bool _start_by(char *str1, char *str2);
 
