@@ -8,18 +8,21 @@
 #ifndef game_h
 #define game_h
 
+
+typedef enum{
+    NONE = 0,
+    COLLAB = 1,
+    BETRAY = 2
+} e_answer;
+
 // ANSWER STRUCTS
 typedef struct {
-    char *p1_answer;
-    char *p2_answer;
+    e_answer p1;
+    e_answer p2;
 } Answer;
 
 typedef struct {
-    /**
-     * Evolution : faire un tableau static ayant pour taille le nombre de rounds
-     * @todo ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    */
-    Answer* answers[10];
+    Answer *answers;
     int size;
 } AnswerList;
 
@@ -48,6 +51,7 @@ typedef struct{
 typedef struct {
     Game **gameList;
     int size;
+  
 } GameList;
 
 // -----------------------------------------------------
@@ -115,19 +119,19 @@ int _is_binome_connected(Binome *binome);
  * 
  * @param list 
  */
-void initialize_answer(Answer *answer);
+void _initialize_answer(Answer *answer);
 /**
  * @brief Initialize default values of AnswerList struct
  * 
  * @param list 
  */
-void initialize_answer_list(AnswerList *list);
+void initialize_answer_list(AnswerList *list, int size);
 /**
  * @brief Add an answer to the list of answer (struct used to fill up game's end results)
  * 
  * @param list 
  * @param answer 
  */
-void add_to_answer_list(AnswerList *list, Answer *answer);
+void add_to_answer_list(AnswerList *list, Binome *binome);
 
 #endif

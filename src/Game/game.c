@@ -154,7 +154,7 @@ Binome *_get_client_binome(int id)
 int _are_answers_written(Binome *b)
 {
     int answersWritten = 0;
-    if (b->clients_answers->p1_answer != "KO" && b->clients_answers->p2_answer != "KO")
+    if (b->clients_answers->p1 != NONE && b->clients_answers->p2 != NONE)
     {
         answersWritten = 1;
     }
@@ -180,8 +180,8 @@ void end_game(Binome *b){
 //                 BINOMES
 // ------------------------------------
 void initialize_binome(Binome *binome){
-    binome->clients_answers->p1_answer = "KO";
-    binome->clients_answers->p2_answer = "KO";
+    binome->clients_answers->p1 = NONE;
+    binome->clients_answers->p2 = NONE;
     binome->gameIndex = 0;
     binome->clients_id[0] = -1;
     binome->clients_id[1] = -1;
@@ -222,19 +222,26 @@ int _is_binome_connected(Binome *binome){
 // ----------------------------------------------
 //               ANSWERS OF BINOMES
 // ----------------------------------------------
-void initialize_answer(Answer *answer) {
-    answer = malloc(sizeof(Answer));
+// Assumes that answer is already allocated in memory
+void _initialize_answer(Answer *answer) {
+    answer->p1 = NONE;
+    answer->p2 = NONE;
+}  
 
-}
-void initialize_answer_list(AnswerList *list) {
-    list = malloc(sizeof(AnswerList));
-    list->size = 0;
+// Assumes that list is already allocated in memory
+void initialize_answer_list(AnswerList *list, int size) {
+    list->answers = malloc(sizeof(Answer)*size);
+    for(int i=0;i<size;i++){
+        initialize_answer(list->answers[i]);
+    }
+    list->size = size;
 }
 
 void add_to_answer(Binome *b, int client_id, char *answer){
     // TODO 
 }
-void add_to_answer_list(AnswerList *list, Answer *answer) {
-    list->answers[list->size] = answer;
-    list->size++;
+
+void add_to_answer_list(AnswerList *list, Binome *binome) {
+    // TODO 
 }
+
