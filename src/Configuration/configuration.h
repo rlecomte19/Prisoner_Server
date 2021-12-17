@@ -6,12 +6,12 @@
 #ifndef configuration_h
 #define configuration_h
 
-#define MAX_CLIENTS
+#define MAX_CLIENTS 20
 
 /**
  * @brief Ip address of the server
  */
-extern char config_serv_ip[20];
+extern char config_serv_ip[MAX_CLIENTS];
 
 /**
  * @brief The network port the server should listen to
@@ -33,7 +33,7 @@ typedef struct
      * etc
      * default to -1
      */
-    int pairs[20]; //TODO: changer en define
+    int pairs[MAX_CLIENTS]; //TODO: changer en define
 
     /**
      * @brief number of element inside pairs
