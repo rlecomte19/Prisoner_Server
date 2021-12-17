@@ -46,7 +46,7 @@ typedef struct{
 } Game;
 
 typedef struct {
-    Game **gameList;
+    Game *gameList;
     int size;
 } GameList;
 
@@ -68,7 +68,13 @@ void end_round();
 void _add_new_game(Game *game);
 // Done
 Binome* _get_client_binome(int id);
-// Done
+
+/**
+ * @brief Verifies if 
+ * 
+ * @param b 
+ * @return int 
+ */
 int _are_answers_written(Binome *b);
 
 /**
