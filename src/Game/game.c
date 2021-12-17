@@ -18,7 +18,8 @@ void game_init(Game *game, Binome *binome)
     game = malloc(sizeof(Game));
     game->b = binome;
     game->currentRound = 0;
-    initialize_answer_list(game->list_of_answers);
+    // TODO : change hardcoding size of answers list 
+    initialize_answer_list(game->list_of_answers, 5);
 
     // Size from GameList is added as binome current game
     binome->gameIndex = list_of_games->size;
@@ -69,10 +70,10 @@ void betray(int id, ulong answerTime){
         switch (playerIdIndex)
         {
         case 0:
-            usedBinome->clients_answers->p1_answer = "Trahison";
+            usedBinome->clients_answers->p1 = BETRAY;
             break;
         case 1:
-            usedBinome->clients_answers->p2_answer = "Trahison";
+            usedBinome->clients_answers->p2 = BETRAY;
             break;
         }
         end_round(usedBinome);
@@ -101,10 +102,10 @@ void collaborate(int id, unsigned long answerTime)
         switch (playerIdIndex)
         {
         case 0:
-            usedBinome->clients_answers->p1_answer = "Collaboration";
+            usedBinome->clients_answers->p1 = COLLAB;
             break;
         case 1:
-            usedBinome->clients_answers->p2_answer = "Collaboration";
+            usedBinome->clients_answers->p2 = COLLAB;
             break;
         }
         end_round(usedBinome);
@@ -117,8 +118,8 @@ void collaborate(int id, unsigned long answerTime)
 
 void reinitializeAnswer(Binome *b)
 {
-    b->clients_answers->p1_answer = "KO";
-    b->clients_answers->p2_answer = "KO";
+    b->clients_answers->p1 = NONE;
+    b->clients_answers->p2 = NONE;
 }
 
 void end_round(Binome *b){
