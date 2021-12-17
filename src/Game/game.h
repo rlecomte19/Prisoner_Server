@@ -46,7 +46,7 @@ typedef struct{
 } Game;
 
 typedef struct {
-    Game *gameList;
+    Game **gameList;
     int size;
 } GameList;
 

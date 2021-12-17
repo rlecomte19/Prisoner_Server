@@ -210,8 +210,9 @@ void _init_binomes_from_config(BinomeList *binomes_config){
 int _is_binome_connected(Binome *binome){
     int isConnected = 0;
     if(binome->clients_id[0] != (-1) && binome->clients_id[1] != (-1)){
-        isConnected = 1;
+        isConnected = 1; 
     }
+
     return isConnected;
 }
 
