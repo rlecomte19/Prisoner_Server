@@ -233,7 +233,7 @@ void _initialize_answer(Answer *answer) {
 void initialize_answer_list(AnswerList *list, int size) {
     list->answers = malloc(sizeof(Answer)*size);
     for(int i=0;i<size;i++){
-        initialize_answer(list->answers[i]);
+        _initialize_answer(&list->answers[i]);
     }
     list->size = size;
 }

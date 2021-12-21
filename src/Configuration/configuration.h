@@ -33,7 +33,7 @@ typedef struct
      * etc
      * default to -1
      */
-    int pairs[MAX_CLIENTS]; //TODO: changer en define
+    int pairs[MAX_CLIENTS];
 
     /**
      * @brief number of element inside pairs
