@@ -29,3 +29,6 @@ doxygen
 
 # personnal note
 notes.md
+
+# ignore excel files
+*.csv
