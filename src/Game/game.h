@@ -73,8 +73,6 @@ void end_game();
 void end_round();
 
 // Done
-void _add_new_game(Game *game);
-// Done
 Binome* _get_client_binome(int id);
 
 /**
@@ -129,7 +127,7 @@ void _initialize_answer(Answer *answer);
  * 
  * @param list 
  */
-void initialize_answer_list(AnswerList *list, int size);
+void initialize_answer_list(AnswerList *list);
 /**
  * @brief Add an answer to the list of answer (struct used to fill up game's end results)
  * 

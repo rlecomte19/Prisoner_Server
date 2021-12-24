@@ -21,27 +21,34 @@ void game_init(Game *game, Binome *binome)
     game->b = binome;
     game->currentRound = 0;
     // TODO : change hardcoding size of answers list 
-    initialize_answer_list(game->list_of_answers, 5);
+    initialize_answer_list(game->list_of_answers);
 
     // Size from GameList is added as binome current game
     binome->gameIndex = list_of_games->size;
 
-    // Registering the created game to server's list
-    _add_new_game(game);
     // Sending to the client the "order" of displaying game's view
     net_server_send_screen_choice(binome->clients_id[0]);
     net_server_send_screen_choice(binome->clients_id[1]);
 }
 
-void _add_new_game(Game *game){
-    /**
-     * @todo CHECKING POINTERS
-     * 
-     */
-    list_of_games->gameList[list_of_games->size] = *game;
-    list_of_games->size++;
+
+void _initialize_game_list(GameList *gList){
+    gList->size = MAX_CLIENTS/2;
+    gList->gameList = malloc(sizeof(Game)*gList->size);
+
+    for(int i=0;i<gList->size;i++){
+        _initialize_game_type(&(gList->gameList[i]));
+    }
+
 }
 
+void _initialize_game_type(Game *game){
+    game->b = malloc(sizeof(Binome));
+    game->list_of_answers = malloc(sizeof(AnswerList));
+    game->currentRound = 0;
+    game->nbMaxRounds = config_nb_rounds;
+    initialize_answer_list(game->list_of_answers);
+}
 
 
 
@@ -191,7 +198,7 @@ void end_game(Binome *b){
 
 /** 
  * --------------------------------------------------------------------------------------
- *                                     GAME DATA RECOVERY
+ *                                          BINOMES
  * --------------------------------------------------------------------------------------
  * 
  * @brief
@@ -225,8 +232,6 @@ void _init_binomes_from_config(BinomeList *binomes){
     for(int i=0;i<(MAX_CLIENTS/2);i+=2){
         binomes->list[listIndex].clients_id[0] = config_games.pairs[i]; 
         binomes->list[listIndex].clients_id[1] = config_games.pairs[i+1];
-        printf("\nconfig_games.parirs[%d] = %d", i , config_games.pairs[i]);
-        printf("\nconfig_games.parirs[%d]= %d", i+1, config_games.pairs[i+1]);
         listIndex++;
     }
 }
@@ -243,22 +248,28 @@ int _is_binome_connected(Binome *binome){
 /** @todo!!! Mettre en place la création des binomes à partir de la liste du fichier de paramétrage */
 
 
-// ----------------------------------------------
-//               ANSWERS OF BINOMES
-// ----------------------------------------------
-// Assumes that answer is already allocated in memory
+/** 
+ * --------------------------------------------------------------------------------------
+ *                                    ANSWERS OF CLIENTS
+ * --------------------------------------------------------------------------------------
+ * 
+ * @brief
+ * 
+*/
 void _initialize_answer(Answer *answer) {
     answer->p1 = NONE;
     answer->p2 = NONE;
 }  
 
-// Assumes that list is already allocated in memory
-void initialize_answer_list(AnswerList *list, int size) {
-    list->answers = malloc(sizeof(Answer)*size);
-    for(int i=0;i<size;i++){
+
+void initialize_answer_list(AnswerList *list) {
+    list->size = MAX_CLIENTS/2;
+
+    list->answers = malloc(sizeof(Answer)*list->size);
+
+    for(int i=0;i<list->size;i++){
         _initialize_answer(&list->answers[i]);
     }
-    list->size = size;
 }
 
 void add_to_answer(Binome *b, int client_id, e_answer answer){
