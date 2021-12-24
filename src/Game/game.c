@@ -225,6 +225,8 @@ void _init_binomes_from_config(BinomeList *binomes){
     for(int i=0;i<(MAX_CLIENTS/2);i+=2){
         binomes->list[listIndex].clients_id[0] = config_games.pairs[i]; 
         binomes->list[listIndex].clients_id[1] = config_games.pairs[i+1];
+        printf("\nconfig_games.parirs[%d] = %d", i , config_games.pairs[i]);
+        printf("\nconfig_games.parirs[%d]= %d", i+1, config_games.pairs[i+1]);
         listIndex++;
     }
 }

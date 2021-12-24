@@ -109,7 +109,7 @@ void initialize_binome(Binome *binome);
 
 void initialize_binome_list(BinomeList *bL);
 
-void _init_binomes_from_config(BinomeList *binomes_config);
+void _init_binomes_from_config(BinomeList *binomes);
 
 int _is_binome_connected(Binome *binome);
 
