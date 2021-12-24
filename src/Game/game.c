@@ -32,7 +32,11 @@ void game_init(Game *game, Binome *binome)
 }
 
 void _add_new_game(Game *game){
-    list_of_games->gameList[list_of_games->size] = game;
+    /**
+     * @todo CHECKING POINTERS
+     * 
+     */
+    list_of_games->gameList[list_of_games->size] = *game;
     list_of_games->size++;
 }
 
@@ -132,9 +136,14 @@ void end_round(Binome *b){
     }
 }
 
-// ----------------------------------------------
-//                 GAME DATA RECOVERY
-// ----------------------------------------------
+/** 
+ * --------------------------------------------------------------------------------------
+ *                                     GAME DATA RECOVERY
+ * --------------------------------------------------------------------------------------
+ * 
+ * @brief
+ * 
+*/
 Binome *_get_client_binome(int id)
 {
     Binome *usedBinome;
@@ -166,7 +175,7 @@ Game *_get_game_binome(Binome *b)
 {
     // Retrieving the affected game from gameIndex contained into "Binome" param  
     Game *usedGame;
-    usedGame = list_of_games->gameList[b->gameIndex];
+    usedGame = &(list_of_games->gameList[b->gameIndex]);
     return usedGame;
 }
 
