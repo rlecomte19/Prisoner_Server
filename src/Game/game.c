@@ -14,6 +14,8 @@ GameList *list_of_games;
 */
 void game_init(Game *game, Binome *binome)
 {
+    // game_config_list.gameList = malloc(sizeof(Game)*(MAX_CLIENTS/2));
+
     // Initializing Game structure elements
     game = malloc(sizeof(Game));
     game->b = binome;
@@ -186,10 +188,17 @@ void end_game(Binome *b){
     }
 
 }
-// ------------------------------------
-//                 BINOMES
-// ------------------------------------
+
+/** 
+ * --------------------------------------------------------------------------------------
+ *                                     GAME DATA RECOVERY
+ * --------------------------------------------------------------------------------------
+ * 
+ * @brief
+ * 
+*/
 void initialize_binome(Binome *binome){
+    binome->clients_answers = malloc(sizeof(Answer));
     binome->clients_answers->p1 = NONE;
     binome->clients_answers->p2 = NONE;
     binome->gameIndex = 0;
@@ -199,21 +208,24 @@ void initialize_binome(Binome *binome){
 
 
 void initialize_binome_list(BinomeList *bL){
-    bL = malloc(sizeof(BinomeList));
     bL->list = malloc(sizeof(Binome)*(MAX_CLIENTS/2));
     bL->size = 0;
 
-    for(int i=0; i<MAX_CLIENTS; i+=2){
+    for(int i=0; i<(MAX_CLIENTS/2); i++){
         initialize_binome(&(bL->list[i]));
         bL->size++;
     }
 }
+ 
+void _init_binomes_from_config(BinomeList *binomes){
+    initialize_binome_list(binomes);
 
-void _init_binomes_from_config(BinomeList *binomes_config){
-    initialize_binome_list(binomes_config);
-    for(int i=0;i<config_games.size/2;i+=2){
-        binomes_config->list[i].clients_id[0] = config_games.pairs[i]; 
-        binomes_config->list[i].clients_id[1] = config_games.pairs[i+1]; 
+    int listIndex = 0;
+
+    for(int i=0;i<(MAX_CLIENTS/2);i+=2){
+        binomes->list[listIndex].clients_id[0] = config_games.pairs[i]; 
+        binomes->list[listIndex].clients_id[1] = config_games.pairs[i+1];
+        listIndex++;
     }
 }
 
@@ -247,7 +259,7 @@ void initialize_answer_list(AnswerList *list, int size) {
     list->size = size;
 }
 
-void add_to_answer(Binome *b, int client_id, char *answer){
+void add_to_answer(Binome *b, int client_id, e_answer answer){
     // TODO 
 }
 

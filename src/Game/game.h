@@ -9,6 +9,7 @@
 #define game_h
 
 
+
 typedef enum{
     NONE = 0,
     COLLAB = 1,
@@ -40,6 +41,8 @@ typedef struct
     int size;
 } BinomeList;
 
+extern BinomeList binome_config_list;
+
 // GAME STRUCTS
 typedef struct{
     int nbMaxRounds;
@@ -54,6 +57,7 @@ typedef struct {
   
 } GameList;
 
+extern GameList game_config_list;
 // -----------------------------------------------------
 //                GAME CONFIG & ENVIRONMENT
 // -----------------------------------------------------
