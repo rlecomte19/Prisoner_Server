@@ -1,9 +1,5 @@
 #include "./game.h"
 
-BinomeList *binomes;
-GameList *list_of_games;
-
-
 /** 
  * --------------------------------------------------------------------------------------
  *                                   GAME INITIALISATIONS
@@ -12,23 +8,22 @@ GameList *list_of_games;
  * 
  * 
 */
-void game_init(Game *game, Binome *binome)
+GameList *game_config_list;
+BinomeList *binome_config_list;
+
+void game_init()
 {
-    // game_config_list.gameList = malloc(sizeof(Game)*(MAX_CLIENTS/2));
+    // Allocation of external structs given in game.h
+    game_config_list = malloc(sizeof(GameList));
+    binome_config_list = malloc(sizeof(BinomeList));
 
-    // Initializing Game structure elements
-    game = malloc(sizeof(Game));
-    game->b = binome;
-    game->currentRound = 0;
-    // TODO : change hardcoding size of answers list 
-    initialize_answer_list(game->list_of_answers);
+    _init_binomes_from_config(binome_config_list);
+    _initialize_game_list(game_config_list);
 
-    // Size from GameList is added as binome current game
-    binome->gameIndex = list_of_games->size;
 
     // Sending to the client the "order" of displaying game's view
-    net_server_send_screen_choice(binome->clients_id[0]);
-    net_server_send_screen_choice(binome->clients_id[1]);
+    // net_server_send_screen_choice(binome->clients_id[0]);
+    // net_server_send_screen_choice(binome->clients_id[1]);
 }
 
 
@@ -156,14 +151,14 @@ void end_round(Binome *b){
 Binome *_get_client_binome(int id)
 {
     Binome *usedBinome;
-    for (int i = 0; i < binomes->size; i++)
+    for (int i = 0; i < binome_config_list->size; i++)
     {
         for (int j = 0; j < 2; j++)
         {
-            if (binomes->list[i].clients_id[j] == id)
+            if (binome_config_list->list[i].clients_id[j] == id)
             {
                 // asigns address of the good binome to a temporary variable
-                usedBinome = &(binomes->list[i]);
+                usedBinome = &(binome_config_list->list[i]);
             }
         }
     }
@@ -184,7 +179,7 @@ Game *_get_game_binome(Binome *b)
 {
     // Retrieving the affected game from gameIndex contained into "Binome" param  
     Game *usedGame;
-    usedGame = &(list_of_games->gameList[b->gameIndex]);
+    usedGame = &(game_config_list->gameList[b->gameIndex]);
     return usedGame;
 }
 

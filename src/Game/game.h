@@ -41,7 +41,7 @@ typedef struct
     int size;
 } BinomeList;
 
-extern BinomeList binome_config_list;
+extern BinomeList *binome_config_list;
 
 // GAME STRUCTS
 typedef struct{
@@ -57,12 +57,17 @@ typedef struct {
   
 } GameList;
 
-extern GameList game_config_list;
+extern GameList *game_config_list;
+
 // -----------------------------------------------------
 //                GAME CONFIG & ENVIRONMENT
 // -----------------------------------------------------
+// todo
+void game_init();
 // Done
-void game_init(Game *game, Binome *binome);
+void _initialize_game_list(GameList *gList);
+// Done
+void _initialize_game_type(Game *game);
 // Done
 void betray();
 // Done
