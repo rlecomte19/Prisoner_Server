@@ -12,7 +12,8 @@ GameList *game_config_list;
 BinomeList *binome_config_list;
 
 void init_server(){
-    // net_server_init();
+    // Initializing server
+    //net_server_init(config_serv_ip, config_serv_port);
 
     // Allocation of external structs given in game.h
     game_config_list = malloc(sizeof(GameList));
@@ -53,8 +54,6 @@ void _initialize_game_type(Game *game){
  * 
 */
 
-
-// @TODO FACTORIZE betray and collaborate methods (if possible with network coupling)
 void betray(int id, ulong answerTime){
     // Retrieve player data
     int binomeIndex = _get_client_binome(id);
@@ -68,10 +67,10 @@ void betray(int id, ulong answerTime){
         switch (playerIdIndex)
         {
         case 0:
-            binome_config_list->list[binomeIndex].clients_answers->p1 = COLLAB;
+            binome_config_list->list[binomeIndex].clients_answers->p1 = BETRAY;
             break;
         case 1:
-            binome_config_list->list[binomeIndex].clients_answers->p2 = COLLAB;
+            binome_config_list->list[binomeIndex].clients_answers->p2 = BETRAY;
             break;
         }
         end_round(&(binome_config_list->list[binomeIndex]));
@@ -120,6 +119,7 @@ int _get_player_index(int binomeIndex, int client_id){
     
     return playerIdIndex;
 }
+
 void reinitializeAnswer(Binome *b)
 {
     b->clients_answers->p1 = NONE;
@@ -130,7 +130,7 @@ void start_game(int gameIndex, Binome binome){
     game_config_list->gameList[gameIndex].isRunning = 1;
     game_config_list->gameList[gameIndex].currentRound = 1;
 
-
+    game_config_list->gameList[gameIndex].b = &binome;
 }
 
 void end_round(int gameIndex){
@@ -177,7 +177,7 @@ int _get_client_binome(int id)
     return binomeIndex;
 }
 
-int _are_answers_written(Binome *b)
+int _are_answers_written(const Binome *b)
 {
     int answersWritten = 0;
     if (b->clients_answers->p1 != NONE && b->clients_answers->p2 != NONE)
@@ -203,6 +203,7 @@ Game *_get_game_binome(Binome *b)
  * @brief
  * 
 */
+
 void initialize_binome(Binome *binome){
     binome->clients_answers = malloc(sizeof(Answer));
     binome->clients_answers->p1 = NONE;
@@ -254,10 +255,11 @@ void client_connection(int id){
     // Retrieve game for this binome
     int gameIndex = binome_config_list->list[binomeIndex].gameIndex;
     
-    // Game for this binome is started if it is connected
+    // Game for this binome is started if it is connected 
     if(_is_binome_connected(&(binome_config_list->list[binomeIndex]))){
-
         start_game(gameIndex, binome_config_list->list[binomeIndex]);
+    }else{
+        net_server_send_screen_waiting(id);
     }
 }
 
