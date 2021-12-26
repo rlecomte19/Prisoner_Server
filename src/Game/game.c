@@ -1,41 +1,46 @@
 #include "./game.h"
 
-BinomeList *binomes;
-GameList *list_of_games;
-
-
 /** 
  * --------------------------------------------------------------------------------------
- *                                   GAME INITIALISATIONS
+ *                                   INITIALISATIONS - GAME & SERVER
  * --------------------------------------------------------------------------------------
  *
- * 
+ * @brief : This part of code defines what is necessary for the game & the server to start
  * 
 */
-void game_init(Game *game, Binome *binome)
-{
-    // Initializing Game structure elements
-    game = malloc(sizeof(Game));
-    game->b = binome;
+GameList *game_config_list;
+BinomeList *binome_config_list;
+
+void init_server(){
+    // net_server_init();
+
+    // Allocation of external structs given in game.h
+    game_config_list = malloc(sizeof(GameList));
+    binome_config_list = malloc(sizeof(BinomeList));
+
+    _init_binomes_from_config(binome_config_list);
+    _initialize_game_list(game_config_list);
+}
+
+
+void _initialize_game_list(GameList *gList){
+    gList->size = MAX_CLIENTS/2;
+    gList->gameList = malloc(sizeof(Game)*gList->size);
+
+    for(int i=0;i<gList->size;i++){
+        _initialize_game_type(&(gList->gameList[i]));
+    }
+
+}
+
+void _initialize_game_type(Game *game){
+    game->b = malloc(sizeof(Binome));
+    game->isRunning = 0;
+    game->list_of_answers = malloc(sizeof(AnswerList));
     game->currentRound = 0;
-    // TODO : change hardcoding size of answers list 
-    initialize_answer_list(game->list_of_answers, 5);
-
-    // Size from GameList is added as binome current game
-    binome->gameIndex = list_of_games->size;
-
-    // Registering the created game to server's list
-    _add_new_game(game);
-    // Sending to the client the "order" of displaying game's view
-    net_server_send_screen_choice(binome->clients_id[0]);
-    net_server_send_screen_choice(binome->clients_id[1]);
+    game->nbMaxRounds = config_nb_rounds;
+    initialize_answer_list(game->list_of_answers);
 }
-
-void _add_new_game(Game *game){
-    list_of_games->gameList[list_of_games->size] = game;
-    list_of_games->size++;
-}
-
 
 
 
@@ -50,33 +55,26 @@ void _add_new_game(Game *game){
 
 
 // @TODO FACTORIZE betray and collaborate methods (if possible with network coupling)
-
 void betray(int id, ulong answerTime){
-    // Retrieves a pointer of the Binome containing client's id (param given)
-    Binome *usedBinome = _get_client_binome(id);
-    
-    // Retrieving the player "calling" this function on the Binome 
-    int playerIdIndex = -1;
-    for (int i = 0; i < 2; i++)
-    {
-        if (usedBinome->clients_id[i] == id)
-        {
-            playerIdIndex = i;
-        }
-    }
-    // Here we test if each player of the Binome has registered his answer ; in which case we 
-    if (_are_answers_written(usedBinome))
+    // Retrieve player data
+    int binomeIndex = _get_client_binome(id);
+    int playerIdIndex = _get_player_index(binomeIndex, id);
+
+
+    // If each player has answered, their answers are registered and the round can end.
+    // If only the player who calls this function is answering, he is "ordered" to wait the other player's answer
+    if (_are_answers_written(&(binome_config_list->list[binomeIndex])))
     {
         switch (playerIdIndex)
         {
         case 0:
-            usedBinome->clients_answers->p1 = BETRAY;
+            binome_config_list->list[binomeIndex].clients_answers->p1 = COLLAB;
             break;
         case 1:
-            usedBinome->clients_answers->p2 = BETRAY;
+            binome_config_list->list[binomeIndex].clients_answers->p2 = COLLAB;
             break;
         }
-        end_round(usedBinome);
+        end_round(&(binome_config_list->list[binomeIndex]));
     }
     else
     {
@@ -86,29 +84,22 @@ void betray(int id, ulong answerTime){
 
 void collaborate(int id, unsigned long answerTime)
 {
-    Binome *usedBinome = _get_client_binome(id);
-    int playerIdIndex = -1;
-    for (int i = 0; i < 2; i++)
-    {
-        if (usedBinome->clients_id[i] == id)
-        {
-            playerIdIndex = i;
-        }
-    }
+    int binomeIndex = _get_client_binome(id);
+    int playerIdIndex = _get_player_index(binomeIndex, id);
     // If each player has answered, their answers are registered and the round can end.
     // If only the player who calls this function is answering, he is "ordered" to wait the other player's answer
-    if (_are_answers_written(usedBinome))
+    if (_are_answers_written(&(binome_config_list->list[binomeIndex])))
     {
         switch (playerIdIndex)
         {
         case 0:
-            usedBinome->clients_answers->p1 = COLLAB;
+            binome_config_list->list[binomeIndex].clients_answers->p1 = COLLAB;
             break;
         case 1:
-            usedBinome->clients_answers->p2 = COLLAB;
+            binome_config_list->list[binomeIndex].clients_answers->p2 = COLLAB;
             break;
         }
-        end_round(usedBinome);
+        end_round(&(binome_config_list->list[binomeIndex]));
     }
     else
     {
@@ -116,40 +107,74 @@ void collaborate(int id, unsigned long answerTime)
     }
 }
 
+int _get_player_index(int binomeIndex, int client_id){
+    int playerIdIndex = -1;
+
+    for (int i = 0; i < 2; i++)
+    {
+        if (binome_config_list->list[binomeIndex].clients_id[i] == client_id)
+        {
+            playerIdIndex = i;
+        }
+    }
+    
+    return playerIdIndex;
+}
 void reinitializeAnswer(Binome *b)
 {
     b->clients_answers->p1 = NONE;
     b->clients_answers->p2 = NONE;
 }
 
-void end_round(Binome *b){
-    Game *binomeGame = _get_game_binome(b);
-    reinitializeAnswer(b);
-    if(binomeGame->currentRound == binomeGame->nbMaxRounds){
+void start_game(int gameIndex, Binome binome){
+    game_config_list->gameList[gameIndex].isRunning = 1;
+    game_config_list->gameList[gameIndex].currentRound = 1;
+
+
+}
+
+void end_round(int gameIndex){
+
+    reinitializeAnswer(&(game_config_list->gameList[gameIndex].b));
+    if(game_config_list->gameList[gameIndex].currentRound == 
+                game_config_list->gameList[gameIndex].nbMaxRounds)
+    {
         // end_game();
     }else{
         // net_server_send_screen_score(); (aux deux)
     }
 }
 
-// ----------------------------------------------
-//                 GAME DATA RECOVERY
-// ----------------------------------------------
-Binome *_get_client_binome(int id)
+void end_game(int gameIndex){
+    // TODO
+}
+
+/** 
+ * --------------------------------------------------------------------------------------
+ *                                     GAME DATA RECOVERY
+ * --------------------------------------------------------------------------------------
+ * 
+ * @brief
+ * 
+*/
+int _get_client_binome(int id)
 {
-    Binome *usedBinome;
-    for (int i = 0; i < binomes->size; i++)
+    int binomeIndex = 0;
+    
+    // Loops throughout binomes extern list
+    for (int i = 0; i < binome_config_list->size; i++)
     {
+        // Loops 2 times to search between 2 client's id
         for (int j = 0; j < 2; j++)
         {
-            if (binomes->list[i].clients_id[j] == id)
+            if (binome_config_list->list[i].clients_id[j] == id)
             {
-                // asigns address of the good binome to a temporary variable
-                usedBinome = &(binomes->list[i]);
+                // return rank of the binome in list
+                binomeIndex  = i;
             }
         }
     }
-    return usedBinome;
+    return binomeIndex;
 }
 
 int _are_answers_written(Binome *b)
@@ -166,21 +191,20 @@ Game *_get_game_binome(Binome *b)
 {
     // Retrieving the affected game from gameIndex contained into "Binome" param  
     Game *usedGame;
-    usedGame = list_of_games->gameList[b->gameIndex];
+    usedGame = &(game_config_list->gameList[b->gameIndex]);
     return usedGame;
 }
 
-void end_game(Binome *b){
-    Game *g = _get_game_binome(b);
-    for(int i=0; i<g->list_of_answers->size;i++){
-        // store_results(AnswerList *list)
-    }
-
-}
-// ------------------------------------
-//                 BINOMES
-// ------------------------------------
+/** 
+ * --------------------------------------------------------------------------------------
+ *                                          BINOMES
+ * --------------------------------------------------------------------------------------
+ * 
+ * @brief
+ * 
+*/
 void initialize_binome(Binome *binome){
+    binome->clients_answers = malloc(sizeof(Answer));
     binome->clients_answers->p1 = NONE;
     binome->clients_answers->p2 = NONE;
     binome->gameIndex = 0;
@@ -190,55 +214,90 @@ void initialize_binome(Binome *binome){
 
 
 void initialize_binome_list(BinomeList *bL){
-    bL = malloc(sizeof(BinomeList));
     bL->list = malloc(sizeof(Binome)*(MAX_CLIENTS/2));
     bL->size = 0;
 
-    for(int i=0; i<MAX_CLIENTS; i+=2){
+    for(int i=0; i<(MAX_CLIENTS/2); i++){
         initialize_binome(&(bL->list[i]));
         bL->size++;
     }
 }
+ 
+void _init_binomes_from_config(BinomeList *binomes){
+    initialize_binome_list(binomes);
 
-void _init_binomes_from_config(BinomeList *binomes_config){
-    initialize_binome_list(binomes_config);
-    for(int i=0;i<config_games.size/2;i+=2){
-        binomes_config->list[i].clients_id[0] = config_games.pairs[i]; 
-        binomes_config->list[i].clients_id[1] = config_games.pairs[i+1]; 
+    int listIndex = 0;
+
+    for(int i=0;i<(MAX_CLIENTS/2);i+=2){
+        binomes->list[listIndex].clients_id[0] = config_games.pairs[i]; 
+        binomes->list[listIndex].clients_id[1] = config_games.pairs[i+1];
+        listIndex++;
+        binomes->list[listIndex].gameIndex = listIndex;
+    }
+}
+
+void client_connection(int id){
+    // Retrieve player data
+    int binomeIndex = _get_client_binome(id);
+    int playerIndex = _get_player_index(binomeIndex, id);
+    
+    switch(playerIndex){
+        case 0 : 
+            binome_config_list->list[binomeIndex].isP1Connected = 1;
+        break;
+
+        case 1 :
+            binome_config_list->list[binomeIndex].isP1Connected = 1;
+        break;
+    }
+
+    // Retrieve game for this binome
+    int gameIndex = binome_config_list->list[binomeIndex].gameIndex;
+    
+    // Game for this binome is started if it is connected
+    if(_is_binome_connected(&(binome_config_list->list[binomeIndex]))){
+
+        start_game(gameIndex, binome_config_list->list[binomeIndex]);
     }
 }
 
 int _is_binome_connected(Binome *binome){
     int isConnected = 0;
-    if(binome->clients_id[0] != (-1) && binome->clients_id[1] != (-1)){
-        isConnected = 1; 
+
+    if(binome->isP1Connected && binome->isP2Connected){
+        isConnected = 1;
     }
 
     return isConnected;
 }
 
-/** @todo!!! Mettre en place la création des binomes à partir de la liste du fichier de paramétrage */
 
 
-// ----------------------------------------------
-//               ANSWERS OF BINOMES
-// ----------------------------------------------
-// Assumes that answer is already allocated in memory
+/** 
+ * --------------------------------------------------------------------------------------
+ *                                    ANSWERS OF CLIENTS
+ * --------------------------------------------------------------------------------------
+ * 
+ * @brief
+ * 
+*/
 void _initialize_answer(Answer *answer) {
     answer->p1 = NONE;
     answer->p2 = NONE;
 }  
 
-// Assumes that list is already allocated in memory
-void initialize_answer_list(AnswerList *list, int size) {
-    list->answers = malloc(sizeof(Answer)*size);
-    for(int i=0;i<size;i++){
+
+void initialize_answer_list(AnswerList *list) {
+    list->size = MAX_CLIENTS/2;
+
+    list->answers = malloc(sizeof(Answer)*list->size);
+
+    for(int i=0;i<list->size;i++){
         _initialize_answer(&list->answers[i]);
     }
-    list->size = size;
 }
 
-void add_to_answer(Binome *b, int client_id, char *answer){
+void add_to_answer(Binome *b, int client_id, e_answer answer){
     // TODO 
 }
 

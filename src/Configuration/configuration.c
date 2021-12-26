@@ -42,7 +42,7 @@ void init_configuration()
         fputs("\n", fi);
         fputs("# Define prisoner's pair\n", fi);
         fputs("# default: 1,2|3,4\n", fi);
-        fputs("games = 1,2|3,4", fi);
+        fputs("games = 1,2|3,4\n", fi);
         fclose(fi);
     }
     else
