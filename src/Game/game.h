@@ -1,8 +1,8 @@
 
-#include "../Communication/net_prisoner_server.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include "../Communication/net_prisoner_server.h"
 #include "../Configuration/configuration.h"
 
 #ifndef game_h
@@ -137,7 +137,7 @@ int _get_client_binome(int id);
  * @param b : memory address of a Binome struct
  * @return int : 0 if false | 1 if true
  */
-int _are_answers_written(const Binome *b);
+int _are_answers_written(Binome *b);
 
 /**
  * @brief Retrieves game from binome game's index in list;
