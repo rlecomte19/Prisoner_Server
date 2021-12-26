@@ -113,7 +113,7 @@ void collaborate(int id, unsigned long answerTime)
     // If only the player who calls this function is answering, he is "ordered" to wait the other player's answer
     if (_are_answers_written(&(binome_config_list->list[binomeIndex])))
     {
-        end_round(&(binome_config_list->list[binomeIndex]));
+        end_round(binome_config_list->list[binomeIndex].gameIndex);
     }
     else
     {
@@ -168,7 +168,7 @@ void end_round(int gameIndex){
     }
 
     add_to_answer_list(&(game_config_list->gameList[gameIndex]));
-    reinitializeAnswer(&(game_config_list->gameList[gameIndex].b));
+    reinitializeAnswer(game_config_list->gameList[gameIndex].b);
     game_config_list->gameList[gameIndex].currentRound++;
 }
 
