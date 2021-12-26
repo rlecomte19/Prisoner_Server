@@ -27,6 +27,10 @@ void init_server(){
 
     _init_binomes_from_config(binome_config_list);
     _initialize_game_list(game_config_list);
+
+    for(int i=0;i<game_config_list->size;i++){
+        game_config_list->gameList[i].b = &binome_config_list->list[i];
+    }
 }
 
 
