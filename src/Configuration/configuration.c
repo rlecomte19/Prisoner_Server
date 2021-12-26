@@ -40,8 +40,8 @@ void init_configuration()
         fputs("# default: 3\n", fi);
         fputs("round_number = 3\n", fi);
         fputs("\n", fi);
-        fputs("# Define prisoner's pair", fi);
-        fputs("# default: 1,2|3,4", fi);
+        fputs("# Define prisoner's pair\n", fi);
+        fputs("# default: 1,2|3,4\n", fi);
         fputs("games = 1,2|3,4", fi);
         fclose(fi);
     }

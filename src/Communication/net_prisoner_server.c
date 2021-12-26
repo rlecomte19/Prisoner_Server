@@ -40,7 +40,7 @@ bool _net_server_exit = false;
 /**
  * @brief counter to keep track of client id
  */
-int _net_server_client_id_counter = 0;
+//int _net_server_client_id_counter = 0;
 
 /**
  * @brief Use to protect lib user function from multiple executions
@@ -161,21 +161,39 @@ void net_server_send_screen_choice(int client)
     _net_server_send_message(&msg, client);
 }
 
+// TODO
 /**
  * @brief Send to specified client to switch to score screen
  * The client may show the given results
- * 
+ * @warning TODO
  * @param client client id
  * @param has_win should be true if this client has win
  * @param score Score for the client (this value isn't enforce, there may be
  * any value a int can handle)
+ * @param round_current current round
+ * @param round_total number of round for this party
  */
-void net_server_send_screen_score(int client, bool has_win, int score)
+void net_server_send_screen_score_round(int client, bool has_win, int score, int round_current, int round_total)
 {
     _net_common_netpacket msg;
-    msg.msg_type = SCREEN_SCORE;
-    msg.has_win = has_win;
-    msg.score = score;
+    msg.msg_type = SCREEN_SCORE_ROUND;
+    msg.round_score.round_has_win = has_win;
+    msg.round_score.player_score = score;
+    msg.round_score.round_actual = round_current;
+    msg.round_score.round_total = round_total;
+    _net_server_send_message(&msg, client);
+}
+
+/**
+ * @brief Send screen score final message
+ * 
+ * @param client client id
+ * @param result double pointer to result array
+ */
+void net_server_send_screen_score_final(int client, int **result)
+{
+    _net_common_netpacket msg;
+    msg.msg_type = SCREEN_SCORE_FINAL;
     _net_server_send_message(&msg, client);
 }
 
@@ -202,8 +220,6 @@ void _net_server_connection_add(_net_server_connection_t *connection)
         perror("Too much simultaneous connections");
         exit(-5);
     }
-    _net_server_call_new_client(_net_server_client_id_counter);
-    _net_server_client_id_counter++;
 }
 
 /**
@@ -347,11 +363,11 @@ void *_net_server_thread_process(void *ptr)
 
         if (len != sizeof(packet))
         {
-            _net_common_dbg("WARN: Invalid packet received, ignoring\n");
+            _net_common_dbg("WARN: Invalid packet received from client %d, ignoring\n", connection->client_id);
             continue;
         }
 
-        _net_common_dbg("Received from client #%d length %d\n", connection->client_id, len);
+        //_net_common_dbg("Received from client #%d length %d\n", connection->client_id, len);
         memcpy(&packet, &buffer_in, len);
 
         switch (packet.msg_type)
@@ -367,7 +383,7 @@ void *_net_server_thread_process(void *ptr)
         case ACTION_QUIT:
             _net_common_dbg("received ACTION_QUIT from client %d\n", connection->client_id);
             _net_server_func_client_disconnect(connection->client_id);
-            quit = true;
+            net_server_stop();
             break;
         case SCREEN_WAITING:
             _net_common_dbg("ERROR: received SCREEN_WAITING from client %d\n", connection->client_id);
@@ -375,8 +391,16 @@ void *_net_server_thread_process(void *ptr)
         case SCREEN_CHOICE:
             _net_common_dbg("ERROR: received SCREEN_CHOICE from client %d\n", connection->client_id);
             break;
-        case SCREEN_SCORE:
-            _net_common_dbg("ERROR: received SCREEN_SCORE from client %d\n", connection->client_id);
+        case SCREEN_SCORE_ROUND:
+            _net_common_dbg("ERROR: received SCREEN_SCORE_ROUND from client %d\n", connection->client_id);
+            break;
+        case SCREEN_SCORE_FINAL:
+            _net_common_dbg("ERROR: received SCREEN_SCORE_FINAL from client %d\n", connection->client_id);
+            break;
+        case INIT_CLIENT_ID:
+            connection->client_id = packet.client_id;
+            _net_common_dbg("Received INIT_CLIENT_ID from client %d\n", connection->client_id);
+            _net_server_call_new_client(connection->client_id);
             break;
 
         default:

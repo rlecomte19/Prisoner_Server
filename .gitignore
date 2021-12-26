@@ -25,10 +25,12 @@ doxygen
 !configDoxygen
 
 # ignore config file
-*.ini
+# exclude only on top folder
+/*.ini
 
 # personnal note
 notes.md
 
 # ignore excel files
-*.csv
+# exclude only on top folder
+/rapport.csv
