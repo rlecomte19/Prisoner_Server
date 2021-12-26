@@ -65,49 +65,93 @@ extern GameList *game_config_list;
 // -----------------------------------------------------
 //                GAME CONFIG & ENVIRONMENT
 // -----------------------------------------------------
-// todo
+
+
+/**
+ * @brief Initialize server listening, retrieved binomes & games initialized from configuration file
+ * 
+ */
 void init_server();
-// Done
+
+/**
+ * @brief Initialize list of games from configuration file
+ * 
+ * @param gList : memory address of a GameList struct to initialize 
+ */
 void _initialize_game_list(GameList *gList);
-// Done
+
+/**
+ * @brief Initialize an item of type : struct Game
+ * 
+ * @param game : memory address of a Game struct to initialize
+ */
 void _initialize_game_type(Game *game);
-// Done
+
+
+/**
+ * @brief Function called by LibPrisonerNetwork when a client answers "betray" during Game
+ * 
+ */
 void betray();
-// Done
+
+/**
+ * @brief Function called by LibPrisonerNetwork when a client answers "collaboration" during Game
+ * 
+ */
 void collaborate();
 
-// TODO
+/**
+ * @brief Initialize game's properties if its binome is fully connected
+ * 
+ * @param gameIndex : index of the game to start in the global games list
+ * @param binome  : memory address of a Binome struct
+ */
 void start_game(int gameIndex, Binome binome);
 
 /**
- * @brief Clotures game by its index in the external GameList
+ * @brief Cloture game by its index in the external GameList
  * 
- * @param int gameIndex
+ * @param int : index of the game to end in the global games list
  */
 void end_game(int gameIndex);
-// TODO
+
+/**
+ * @brief Clotures current round when each client has answered
+ * 
+ * @param gameIndex : index of the game in global games list (integer)
+ */
 void end_round(int gameIndex);
 
-// Done
+/**
+ * @brief Retrieve the binome of client's id given in parameters.
+ * This search is done on the global binomes list created with configuration  
+ * 
+ * @param id : client's id (integer)
+ * @return int : index of the binome containing client's id param in the global binomes list
+ */
 int _get_client_binome(int id);
 
 /**
- * @brief Verifies if 
+ * @brief Verifies if each player of a binome has played during the game
  * 
- * @param b 
- * @return int 
+ * @param b : memory address of a Binome struct
+ * @return int : 0 if false | 1 if true
  */
-int _are_answers_written(Binome *b);
+int _are_answers_written(const Binome *b);
 
 /**
  * @brief Retrieves game from binome game's index in list;
  * 
- * @param b 
- * @return Game* 
+ * @param b memory address of a Binome struct
+ * @return *Game : pointer to a Game struct
  */
 Game* _get_game_binome(Binome *b);
 
-// Done
+/**
+ * @brief Put back binome's answers to NONE 
+ * 
+ * @param b : memory address of a Binome struct
+ */
 void reinitializeAnswer(Binome *b);
 
 // ---------------------------------------
@@ -115,18 +159,41 @@ void reinitializeAnswer(Binome *b);
 // ---------------------------------------
 
 /**
- * @brief Initialize binome struct
+ * @brief Initialize Binome struct for each of its properties
  *
- * @param *binome
+ * @param binome : memory address of a Binome struct
  */
 void initialize_binome(Binome *binome);
 
+/**
+ * @brief Initialize BinomeList struct for each of its properties
+ * 
+ * @param bL : memory address of a BinomeList struct
+ */
 void initialize_binome_list(BinomeList *bL);
 
+/**
+ * @brief Initialize a BinomeList and its contained binomes according to the configuration file
+ * 
+ * @param binomes : memory address of a BinomeList struct
+ */
 void _init_binomes_from_config(BinomeList *binomes);
 
+/**
+ * @brief Verifie if each player of a Binome is connected
+ * It checks if isP1Connected & isP2Connected Binome's properties are true
+ * @param binome : memory address of a Binome struct
+ * @return int : 0 if false | 1 if true
+ */
 int _is_binome_connected(Binome *binome);
 
+/**
+ * @brief Function called by LibPrisonerNetwork when a client asks for a connection
+ * Launches the game if each client of a Binome is connected
+ * Sends waiting screen "order" to the client if he's the only one connected of its binome
+ * 
+ * @param id : client's id (integer)
+ */
 void client_connection(int id);
 
 // ----------------------------------------------
@@ -134,22 +201,24 @@ void client_connection(int id);
 // ----------------------------------------------
 
 /**
- * @brief Initialize default values of Answer struct
+ * @brief Initialize Answer struct for each of its properties
  * 
- * @param list 
+ * @param answer : memory address of an Answer struct
  */
 void _initialize_answer(Answer *answer);
+
 /**
- * @brief Initialize default values of AnswerList struct
+ * @brief Initialize Answer struct for each of its properties
  * 
- * @param list 
+ * @param list : memory address of an AnswerList struct
  */
 void initialize_answer_list(AnswerList *list);
+
 /**
  * @brief Add an answer to the list of answer (struct used to fill up game's end results)
  * 
- * @param list 
- * @param answer 
+ * @param list : memory address of an AnswerList struct
+ * @param binome : memory address of a Binome struct
  */
 void add_to_answer_list(AnswerList *list, Binome *binome);
 
