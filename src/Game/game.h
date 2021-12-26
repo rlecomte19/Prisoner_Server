@@ -95,13 +95,13 @@ void _initialize_game_type(Game *game);
  * @brief Function called by LibPrisonerNetwork when a client answers "betray" during Game
  * 
  */
-void betray();
+void betray(int id, ulong answerTime);
 
 /**
  * @brief Function called by LibPrisonerNetwork when a client answers "collaboration" during Game
  * 
  */
-void collaborate();
+void collaborate(int id, ulong answerTime);
 
 /**
  * @brief Initialize game's properties if its binome is fully connected

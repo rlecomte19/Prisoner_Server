@@ -87,7 +87,7 @@ void betray(int id, ulong answerTime){
     // If only the player who calls this function is answering, he is "ordered" to wait the other player's answer
     if (_are_answers_written(&(binome_config_list->list[binomeIndex])))
     {
-        end_round(&(binome_config_list->list[binomeIndex]));
+        end_round(gameIndex);
     }
     else
     {
@@ -95,7 +95,7 @@ void betray(int id, ulong answerTime){
     }
 }
 
-void collaborate(int id, unsigned long answerTime)
+void collaborate(int id, ulong answerTime)
 {
     int binomeIndex = _get_client_binome(id);
     int playerIdIndex = _get_player_index(binomeIndex, id);
@@ -116,7 +116,7 @@ void collaborate(int id, unsigned long answerTime)
     // If only the player who calls this function is answering, he is "ordered" to wait the other player's answer
     if (_are_answers_written(&(binome_config_list->list[binomeIndex])))
     {
-        end_round(binome_config_list->list[binomeIndex].gameIndex);
+        end_round(gameIndex);
     }
     else
     {
