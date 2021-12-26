@@ -1,0 +1,69 @@
+﻿Rapport généré le;Fri Dec 24 02:03:47 2021
+
+--- INFORMATIONS GÉNÉRALES ---
+Nombre de parties:;3
+
+
+--- GAME #0 ---
+Tour de jeu:;10
+Tour de jeu prévu:;10
+
+- BINOME -
+Id joueur 1;83
+Id joueur 2;86
+
+- RESPONSES -
+Round #;Joueur 1 (id 83); Joueur 2 (id 86)
+0;Trahison;Collaboration
+1;Trahison;Collaboration
+2;Trahison;Collaboration
+3;Trahison;Collaboration
+4;Collaboration;Trahison
+5;Collaboration;Trahison
+6;Trahison;Collaboration
+7;Trahison;Collaboration
+8;Collaboration;Trahison
+9;Trahison;Collaboration
+
+--- GAME #1 ---
+Tour de jeu:;10
+Tour de jeu prévu:;10
+
+- BINOME -
+Id joueur 1;90
+Id joueur 2;59
+
+- RESPONSES -
+Round #;Joueur 1 (id 90); Joueur 2 (id 59)
+0;Trahison;Collaboration
+1;Collaboration;Trahison
+2;Collaboration;Trahison
+3;Collaboration;Trahison
+4;Collaboration;Trahison
+5;Collaboration;Trahison
+6;Trahison;Collaboration
+7;Collaboration;Trahison
+8;Trahison;Collaboration
+9;Trahison;Collaboration
+
+--- GAME #2 ---
+Tour de jeu:;10
+Tour de jeu prévu:;10
+
+- BINOME -
+Id joueur 1;82
+Id joueur 2;30
+
+- RESPONSES -
+Round #;Joueur 1 (id 82); Joueur 2 (id 30)
+0;Collaboration;Trahison
+1;Trahison;Collaboration
+2;Trahison;Collaboration
+3;Trahison;Collaboration
+4;Trahison;Collaboration
+5;Collaboration;Trahison
+6;Collaboration;Trahison
+7;Collaboration;Trahison
+8;Trahison;Collaboration
+9;Trahison;Collaboration
+
