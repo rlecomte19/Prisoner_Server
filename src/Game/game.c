@@ -37,6 +37,8 @@ void _initialize_game_list(GameList *gList){
 void _initialize_game_type(Game *game){
     game->b = malloc(sizeof(Binome));
     game->isRunning = 0;
+    game->isP1Ready = 1;
+    game->isP2Ready = 1;
     game->list_of_answers = malloc(sizeof(AnswerList));
     game->currentRound = 0;
     game->nbMaxRounds = config_nb_rounds;
@@ -134,15 +136,24 @@ void start_game(int gameIndex, Binome binome){
 }
 
 void end_round(int gameIndex){
+    int client1 = game_config_list->gameList[gameIndex].b->clients_id[0];
+    int client2 = game_config_list->gameList[gameIndex].b->clients_id[1];
 
-    reinitializeAnswer(&(game_config_list->gameList[gameIndex].b));
     if(game_config_list->gameList[gameIndex].currentRound == 
                 game_config_list->gameList[gameIndex].nbMaxRounds)
     {
         // end_game();
-    }else{
-        // net_server_send_screen_score(); (aux deux)
     }
+    // Sending score screen to clients
+    else
+    {
+        net_server_send_screen_score(client1);
+        net_server_send_screen_score(client2);
+    }
+
+    add_to_answer_list(&(game_config_list->gameList[gameIndex]));
+    reinitializeAnswer(&(game_config_list->gameList[gameIndex].b));
+    game_config_list->gameList[gameIndex].currentRound++;
 }
 
 void end_game(int gameIndex){
@@ -257,6 +268,7 @@ void client_connection(int id){
     
     // Game for this binome is started if it is connected 
     if(_is_binome_connected(&(binome_config_list->list[binomeIndex]))){
+        printf("\n CLIENT %d EST CONNECTE \n", id);
         start_game(gameIndex, binome_config_list->list[binomeIndex]);
     }else{
         net_server_send_screen_waiting(id);
@@ -286,8 +298,7 @@ int _is_binome_connected(Binome *binome){
 void _initialize_answer(Answer *answer) {
     answer->p1 = NONE;
     answer->p2 = NONE;
-}  
-
+}
 
 void initialize_answer_list(AnswerList *list) {
     list->size = MAX_CLIENTS/2;
@@ -303,7 +314,7 @@ void add_to_answer(Binome *b, int client_id, e_answer answer){
     // TODO 
 }
 
-void add_to_answer_list(AnswerList *list, Binome *binome) {
+void add_to_answer_list(Game *game) {
     // TODO 
 }
 

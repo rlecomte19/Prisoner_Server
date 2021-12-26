@@ -50,6 +50,8 @@ typedef struct{
     int nbMaxRounds;
     int currentRound;
     int isRunning;
+    int isP1Ready;
+    int isP2Ready;
     Binome *b;
     AnswerList *list_of_answers;
 } Game;
@@ -220,6 +222,6 @@ void initialize_answer_list(AnswerList *list);
  * @param list : memory address of an AnswerList struct
  * @param binome : memory address of a Binome struct
  */
-void add_to_answer_list(AnswerList *list, Binome *binome);
+void add_to_answer_list(Game *game);
 
 #endif
