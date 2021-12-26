@@ -71,14 +71,15 @@ void betray(int id, ulong answerTime){
     int binomeIndex = _get_client_binome(id);
     int playerIdIndex = _get_player_index(binomeIndex, id);
 
+    int gameIndex = binome_config_list->list[binomeIndex].gameIndex;
 
     switch (playerIdIndex)
     {
     case 0:
-        binome_config_list->list[binomeIndex].clients_answers->p1 = BETRAY;
+        game_config_list->gameList[gameIndex].b->clients_answers->p1 = BETRAY;
         break;
     case 1:
-        binome_config_list->list[binomeIndex].clients_answers->p2 = BETRAY;
+        game_config_list->gameList[gameIndex].b->clients_answers->p2 = BETRAY;
         break;
     }
 
@@ -99,13 +100,15 @@ void collaborate(int id, unsigned long answerTime)
     int binomeIndex = _get_client_binome(id);
     int playerIdIndex = _get_player_index(binomeIndex, id);
 
+    int gameIndex = binome_config_list->list[binomeIndex].gameIndex;
+
     switch (playerIdIndex)
     {
     case 0:
-        binome_config_list->list[binomeIndex].clients_answers->p1 = COLLAB;
+        game_config_list->gameList[gameIndex].b->clients_answers->p1 = COLLAB;
         break;
     case 1:
-        binome_config_list->list[binomeIndex].clients_answers->p2 = COLLAB;
+        game_config_list->gameList[gameIndex].b->clients_answers->p2 = COLLAB;
         break;
     }
    

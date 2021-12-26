@@ -10,7 +10,8 @@ int main()
 	init_configuration();
 
 	init_server();
-	
+
+	printf("TEST");
 	while(1){
 		sleep(1);
 	}
