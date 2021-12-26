@@ -137,7 +137,7 @@ int _get_client_binome(int id);
  * @param b : memory address of a Binome struct
  * @return int : 0 if false | 1 if true
  */
-int _are_answers_written(Binome *b);
+int _are_answers_written(const Binome *b);
 
 /**
  * @brief Retrieves game from binome game's index in list;
@@ -195,6 +195,8 @@ int _is_binome_connected(Binome *binome);
  * @param id : client's id (integer)
  */
 void client_connection(int id);
+
+void client_disconnect(int id);
 
 // ----------------------------------------------
 //                 ANSWERS OF PLAYERS

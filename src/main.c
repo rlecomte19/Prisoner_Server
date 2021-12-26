@@ -11,9 +11,9 @@ int main()
 
 	init_server();
 	
-	// while(1){
-	// 	sleep(2);
-	// }
+	while(1){
+		sleep(1);
+	}
 
 	// Binome *b = malloc(sizeof(Binome));
 	// b = _get_client_binome(3);

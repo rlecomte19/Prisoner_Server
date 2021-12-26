@@ -12,8 +12,14 @@ GameList *game_config_list;
 BinomeList *binome_config_list;
 
 void init_server(){
+
+    net_server_set_func_betray(betray);
+    net_server_set_func_cooperate(collaborate);
+    net_server_set_func_new_client(client_connection);
+    net_server_set_func_client_disconnect(client_disconnect);
+
     // Initializing server
-    //net_server_init(config_serv_ip, config_serv_port);
+    net_server_init(config_serv_ip, config_serv_port);
 
     // Allocation of external structs given in game.h
     game_config_list = malloc(sizeof(GameList));
@@ -261,6 +267,10 @@ void client_connection(int id){
     }else{
         net_server_send_screen_waiting(id);
     }
+}
+
+void client_disconnect(int id) {
+    //todo ?
 }
 
 int _is_binome_connected(Binome *binome){
