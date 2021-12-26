@@ -139,6 +139,9 @@ void start_game(int gameIndex, Binome binome){
     game_config_list->gameList[gameIndex].currentRound = 1;
 
     game_config_list->gameList[gameIndex].b = &binome;
+
+    net_server_send_screen_choice(game_config_list->gameList[gameIndex].b->clients_id[0]);
+    net_server_send_screen_choice(game_config_list->gameList[gameIndex].b->clients_id[1]);
 }
 
 void end_round(int gameIndex){
