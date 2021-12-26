@@ -68,19 +68,20 @@ void betray(int id, ulong answerTime){
     int playerIdIndex = _get_player_index(binomeIndex, id);
 
 
+    switch (playerIdIndex)
+    {
+    case 0:
+        binome_config_list->list[binomeIndex].clients_answers->p1 = BETRAY;
+        break;
+    case 1:
+        binome_config_list->list[binomeIndex].clients_answers->p2 = BETRAY;
+        break;
+    }
+
     // If each player has answered, their answers are registered and the round can end.
     // If only the player who calls this function is answering, he is "ordered" to wait the other player's answer
     if (_are_answers_written(&(binome_config_list->list[binomeIndex])))
     {
-        switch (playerIdIndex)
-        {
-        case 0:
-            binome_config_list->list[binomeIndex].clients_answers->p1 = BETRAY;
-            break;
-        case 1:
-            binome_config_list->list[binomeIndex].clients_answers->p2 = BETRAY;
-            break;
-        }
         end_round(&(binome_config_list->list[binomeIndex]));
     }
     else
@@ -93,19 +94,21 @@ void collaborate(int id, unsigned long answerTime)
 {
     int binomeIndex = _get_client_binome(id);
     int playerIdIndex = _get_player_index(binomeIndex, id);
+
+    switch (playerIdIndex)
+    {
+    case 0:
+        binome_config_list->list[binomeIndex].clients_answers->p1 = COLLAB;
+        break;
+    case 1:
+        binome_config_list->list[binomeIndex].clients_answers->p2 = COLLAB;
+        break;
+    }
+   
     // If each player has answered, their answers are registered and the round can end.
     // If only the player who calls this function is answering, he is "ordered" to wait the other player's answer
     if (_are_answers_written(&(binome_config_list->list[binomeIndex])))
     {
-        switch (playerIdIndex)
-        {
-        case 0:
-            binome_config_list->list[binomeIndex].clients_answers->p1 = COLLAB;
-            break;
-        case 1:
-            binome_config_list->list[binomeIndex].clients_answers->p2 = COLLAB;
-            break;
-        }
         end_round(&(binome_config_list->list[binomeIndex]));
     }
     else
@@ -156,8 +159,8 @@ void end_round(int gameIndex){
     // Sending score screen to clients
     else
     {
-        net_server_send_screen_score(client1);
-        net_server_send_screen_score(client2);
+        net_server_send_screen_score_round(client1, false, 0, 0, 0);
+        net_server_send_screen_score_round(client2, false, 0, 0, 0);
     }
 
     add_to_answer_list(&(game_config_list->gameList[gameIndex]));
@@ -268,7 +271,7 @@ void client_connection(int id){
         break;
 
         case 1 :
-            binome_config_list->list[binomeIndex].isP1Connected = 1;
+            binome_config_list->list[binomeIndex].isP2Connected = 1;
         break;
     }
 
@@ -323,11 +326,7 @@ void initialize_answer_list(AnswerList *list) {
     }
 }
 
-void add_to_answer(Binome *b, int client_id, e_answer answer){
-    // TODO 
-}
-
 void add_to_answer_list(Game *game) {
-    // TODO 
+    game->list_of_answers[(game->currentRound-1)].answers = game->b->clients_answers;
 }
 

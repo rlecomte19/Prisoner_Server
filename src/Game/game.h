@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <time.h>
 #include "../Communication/net_prisoner_server.h"
