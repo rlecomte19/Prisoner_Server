@@ -9,7 +9,7 @@ void new_client(int client_id)
 	printf("new_client id %d\n", client_id);
 	net_server_send_screen_waiting(432);
 
-	sleep(10);
+	sleep(2);
 
 	net_server_send_screen_choice(432);
     
