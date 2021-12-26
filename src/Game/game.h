@@ -30,6 +30,8 @@ typedef struct {
 // BINOMES STRUCTS
 typedef struct
 {
+    int isP1Connected;
+    int isP2Connected; 
     int clients_id[2];
     Answer *clients_answers;
     int gameIndex;
@@ -47,6 +49,7 @@ extern BinomeList *binome_config_list;
 typedef struct{
     int nbMaxRounds;
     int currentRound;
+    int isRunning;
     Binome *b;
     AnswerList *list_of_answers;
 } Game;
@@ -63,7 +66,7 @@ extern GameList *game_config_list;
 //                GAME CONFIG & ENVIRONMENT
 // -----------------------------------------------------
 // todo
-void game_init();
+void init_server();
 // Done
 void _initialize_game_list(GameList *gList);
 // Done
@@ -72,13 +75,21 @@ void _initialize_game_type(Game *game);
 void betray();
 // Done
 void collaborate();
+
 // TODO
-void end_game();
+void start_game(int gameIndex, Binome binome);
+
+/**
+ * @brief Clotures game by its index in the external GameList
+ * 
+ * @param int gameIndex
+ */
+void end_game(int gameIndex);
 // TODO
-void end_round();
+void end_round(int gameIndex);
 
 // Done
-Binome* _get_client_binome(int id);
+int _get_client_binome(int id);
 
 /**
  * @brief Verifies if 
@@ -116,6 +127,7 @@ void _init_binomes_from_config(BinomeList *binomes);
 
 int _is_binome_connected(Binome *binome);
 
+void client_connection(int id);
 
 // ----------------------------------------------
 //                 ANSWERS OF PLAYERS
