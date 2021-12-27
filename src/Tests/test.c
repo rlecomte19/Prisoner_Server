@@ -120,15 +120,31 @@ void test_game_management(){
     binome_management_test->isP1Connected = 1;
     binome_management_test->isP2Connected = 1;
     assert(_is_binome_connected(binome_management_test) == 1);
+    start_game(1);
+    assert(game_config_list->gameList[1].isRunning == 1);
+    assert(game_config_list->gameList[1].currentRound == 1);
+    add_to_answer_list(&(game_config_list->gameList[1]));
+    assert(game_config_list->gameList[1].list_of_answers->answers[0].p1 == BETRAY);
+    assert(game_config_list->gameList[1].list_of_answers->answers[0].p2 == COLLAB);
+    end_round(1);
+    assert(game_config_list->gameList[1].b->clients_answers->p1 == NONE);
+    assert(game_config_list->gameList[1].b->clients_answers->p2 == NONE);
+    assert(game_config_list->gameList[1].currentRound == 2);
+    game_config_list->gameList[1].currentRound = 10;
+    end_round(1); // here is considered that end_game() is called
+    assert(game_config_list->gameList[1].isRunning == 0);
+    assert(game_config_list->gameList[1].isP1Ready == 0);
+    assert(game_config_list->gameList[1].isP2Ready == 0);
+    assert(game_config_list->gameList[1].list_of_answers->answers[1].p1 == NONE);
+    assert(game_config_list->gameList[1].list_of_answers->answers[1].p2 == NONE);
+    assert(game_config_list->gameList[1].currentRound == 0);
+    assert(game_config_list->gameList[1].b->isP1Connected == 0);
+    assert(game_config_list->gameList[1].b->isP1Connected == 0);
+    assert(game_config_list->gameList[1].b->clients_answers->p1 == NONE);
+    assert(game_config_list->gameList[1].b->clients_answers->p2 == NONE);
 
-    
     printf("\n===== GAME MANAGEMENT WORKING WELL SO FAR... =====\n\n");
 
-
-// void start_game(int gameIndex, Binome binome);
-// void end_round(int gameIndex);
-// void end_game(int gameIndex);
-// void add_to_answer_list(Game *game);
 }
 
 
