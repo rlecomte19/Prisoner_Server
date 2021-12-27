@@ -288,7 +288,6 @@ void client_connection(int id){
     
     // Game for this binome is started if it is connected 
     if(_is_binome_connected(&(binome_config_list->list[binomeIndex]))){
-        printf("\n CLIENT %d EST CONNECTE \n", id);
         start_game(gameIndex);
     }else{
         net_server_send_screen_waiting(id);
