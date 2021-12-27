@@ -89,10 +89,6 @@ void betray(int id, ulong answerTime){
     {
         end_round(gameIndex);
     }
-    else
-    {
-        net_server_send_screen_waiting(id);
-    }
 }
 
 void collaborate(int id, ulong answerTime)
@@ -118,10 +114,6 @@ void collaborate(int id, ulong answerTime)
     {
         end_round(gameIndex);
     }
-    else
-    {
-        net_server_send_screen_waiting(id);
-    }
 }
 
 int _get_player_index(int binomeIndex, int client_id){
@@ -144,13 +136,13 @@ void reinitializeAnswer(Binome *b)
     b->clients_answers->p2 = NONE;
 }
 
-void start_game(int gameIndex, Binome binome)
+void start_game(int gameIndex)
 {
+    // Launche game
     game_config_list->gameList[gameIndex].isRunning = 1;
     game_config_list->gameList[gameIndex].currentRound = 1;
 
-    game_config_list->gameList[gameIndex].b = &binome;
-
+    // Sending to Binome the "order" of displaying game view
     net_server_send_screen_choice(game_config_list->gameList[gameIndex].b->clients_id[0]);
     net_server_send_screen_choice(game_config_list->gameList[gameIndex].b->clients_id[1]);
 }
@@ -160,25 +152,38 @@ void end_round(int gameIndex)
     int client1 = game_config_list->gameList[gameIndex].b->clients_id[0];
     int client2 = game_config_list->gameList[gameIndex].b->clients_id[1];
 
-    if(game_config_list->gameList[gameIndex].currentRound == 
+    if(game_config_list->gameList[gameIndex].currentRound >= 
                 game_config_list->gameList[gameIndex].nbMaxRounds)
     {
-        // end_game();
+        end_game(gameIndex);
     }
-    // Sending score screen to clients
     else
     {
+        // Sending score screen to Binome
         net_server_send_screen_score_round(client1, false, 0, 0, 0);
         net_server_send_screen_score_round(client2, false, 0, 0, 0);
+        // Initializations of new round
+        add_to_answer_list(&(game_config_list->gameList[gameIndex]));
+        reinitializeAnswer(game_config_list->gameList[gameIndex].b);
+        game_config_list->gameList[gameIndex].currentRound++;
     }
 
-    add_to_answer_list(&(game_config_list->gameList[gameIndex]));
-    reinitializeAnswer(game_config_list->gameList[gameIndex].b);
-    game_config_list->gameList[gameIndex].currentRound++;
 }
 
 void end_game(int gameIndex){
-    // TODO
+    game_config_list->gameList[gameIndex].currentRound = 0;
+    game_config_list->gameList[gameIndex].isRunning = 0;
+    reinitializeAnswer(game_config_list->gameList[gameIndex].b);
+    for(int i=0;i<game_config_list->gameList[gameIndex].nbMaxRounds;i++){
+        game_config_list->gameList[gameIndex].list_of_answers->answers[i].p1 == NONE;
+        game_config_list->gameList[gameIndex].list_of_answers->answers[i].p2 == NONE;
+    }
+    game_config_list->gameList[gameIndex].isP1Ready = 0;
+    game_config_list->gameList[gameIndex].isP2Ready = 0;
+    client_disconnect(game_config_list->gameList[gameIndex].b->clients_id[0]);
+    client_disconnect(game_config_list->gameList[gameIndex].b->clients_id[1]);
+
+    store_results("results.csv", *game_config_list);
 }
 
 /** 
@@ -284,14 +289,26 @@ void client_connection(int id){
     // Game for this binome is started if it is connected 
     if(_is_binome_connected(&(binome_config_list->list[binomeIndex]))){
         printf("\n CLIENT %d EST CONNECTE \n", id);
-        start_game(gameIndex, binome_config_list->list[binomeIndex]);
+        start_game(gameIndex);
     }else{
         net_server_send_screen_waiting(id);
     }
 }
 
 void client_disconnect(int id) {
-    //todo ?
+    int binomeIndex = _get_client_binome(id);
+    int playerIndex = _get_player_index(binomeIndex, id);
+
+    int gameIndex = binome_config_list->list[binomeIndex].gameIndex;
+    
+    switch(playerIndex){
+        case 0: 
+            game_config_list->gameList[gameIndex].b->isP1Connected =  0;
+        break;
+        case 1:
+            game_config_list->gameList[gameIndex].b->isP2Connected =  0;
+        break;
+    }    
 }
 
 int _is_binome_connected(Binome *binome){
@@ -330,6 +347,6 @@ void initialize_answer_list(AnswerList *list) {
 }
 
 void add_to_answer_list(Game *game) {
-    game->list_of_answers[(game->currentRound-1)].answers = game->b->clients_answers;
+    game->list_of_answers->answers[(game->currentRound-1)] = *(game->b->clients_answers);
 }
 

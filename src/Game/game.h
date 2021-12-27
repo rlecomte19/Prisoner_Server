@@ -107,9 +107,8 @@ void collaborate(int id, ulong answerTime);
  * @brief Initialize game's properties if its binome is fully connected
  * 
  * @param gameIndex : index of the game to start in the global games list
- * @param binome  : memory address of a Binome struct
  */
-void start_game(int gameIndex, Binome binome);
+void start_game(int gameIndex);
 
 /**
  * @brief Cloture game by its index in the external GameList
