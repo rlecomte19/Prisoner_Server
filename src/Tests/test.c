@@ -149,6 +149,18 @@ void test_game_management(){
 
 
 void test_connections(){
-    void client_connection(int id);
+    client_connection(1);
+    assert(binome_config_list->list[0].isP1Connected == 1);
+    assert(game_config_list->gameList[0].isRunning == 0);
+    client_connection(2);
+    assert(binome_config_list->list[0].isP2Connected == 1);
+    assert(game_config_list->gameList[0].isRunning == 1);
     void client_disconnect(int id);
+    client_disconnect(1);
+    client_disconnect(2);
+    assert(binome_config_list->list[0].isP1Connected == 0);
+    assert(binome_config_list->list[0].isP2Connected == 0);
+    
+    printf("\n===== CLIENT CONNECTION AND DISCONNECTION WORKS WELL SO FAR... =====\n\n");
+
 }
