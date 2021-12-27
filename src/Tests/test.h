@@ -13,6 +13,6 @@
 
 void test_initializations();
 
-void test_game_managements();
+void test_game_management();
 
-void test_game_answers();
+void test_connections();

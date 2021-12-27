@@ -143,14 +143,6 @@ int _get_client_binome(int id);
 int _are_answers_written(const Binome *b);
 
 /**
- * @brief Retrieves game from binome game's index in list;
- * 
- * @param b memory address of a Binome struct
- * @return *Game : pointer to a Game struct
- */
-Game* _get_game_binome(Binome *b);
-
-/**
  * @brief Put back binome's answers to NONE 
  * 
  * @param b : memory address of a Binome struct
@@ -198,6 +190,16 @@ int _is_binome_connected(Binome *binome);
  * @param id : client's id (integer)
  */
 void client_connection(int id);
+
+/**
+ * @brief A binome contains an array[2] which contains its client ids. 
+ * This function returns the position in this array of client_id givne in parameters
+ * 
+ * @param binomeIndex : index of the binome to search on
+ * @param client_id 
+ * @return int :  0 or 1 depending on position of client id
+ */
+int _get_player_index(int binomeIndex, int client_id);
 
 void client_disconnect(int id);
 

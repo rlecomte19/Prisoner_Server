@@ -144,7 +144,8 @@ void reinitializeAnswer(Binome *b)
     b->clients_answers->p2 = NONE;
 }
 
-void start_game(int gameIndex, Binome binome){
+void start_game(int gameIndex, Binome binome)
+{
     game_config_list->gameList[gameIndex].isRunning = 1;
     game_config_list->gameList[gameIndex].currentRound = 1;
 
@@ -154,7 +155,8 @@ void start_game(int gameIndex, Binome binome){
     net_server_send_screen_choice(game_config_list->gameList[gameIndex].b->clients_id[1]);
 }
 
-void end_round(int gameIndex){
+void end_round(int gameIndex)
+{
     int client1 = game_config_list->gameList[gameIndex].b->clients_id[0];
     int client2 = game_config_list->gameList[gameIndex].b->clients_id[1];
 
@@ -215,14 +217,6 @@ int _are_answers_written(const Binome *b)
         answersWritten = 1;
     }
     return answersWritten;
-}
-
-Game *_get_game_binome(Binome *b)
-{
-    // Retrieving the affected game from gameIndex contained into "Binome" param  
-    Game *usedGame;
-    usedGame = &(game_config_list->gameList[b->gameIndex]);
-    return usedGame;
 }
 
 /** 
