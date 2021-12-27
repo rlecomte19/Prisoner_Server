@@ -241,6 +241,8 @@ void initialize_binome(Binome *binome){
     binome->gameIndex = 0;
     binome->clients_id[0] = -1;
     binome->clients_id[1] = -1;
+    binome->isP1Connected = 0;
+    binome->isP2Connected = 0;
 }
 
 
