@@ -40,7 +40,7 @@
  * if false, multithreading protection should be implemented by lib user to prevent
  * concurency issues
  */
-#define THREAD_SAFETY true
+#define THREAD_SAFETY false
 
 /**
  * @brief  max size of the buffer 

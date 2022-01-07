@@ -34,3 +34,5 @@ notes.md
 # ignore excel files
 # exclude only on top folder
 /rapport.csv
+
+output/config.ini

@@ -18,6 +18,8 @@ void init_server(){
     net_server_set_func_new_client(client_connection);
     net_server_set_func_client_disconnect(client_disconnect);
 
+    init_configuration();
+
     // Initializing server
     net_server_init(config_serv_ip, config_serv_port);
 

@@ -5,9 +5,16 @@
 
 int main()
 {
-	test_initializations();
-	test_game_management();
-	test_connections();
- 
+	// test_initializations();
+	// test_game_management();
+	// test_connections();
+	
+	init_server();
+
+	while (1)
+	{
+		sleep(1);
+	}
+
 	return (0);
 }
